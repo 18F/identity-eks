@@ -2,3 +2,4 @@ namespace: kubernetes-dashboard
 resources:
   - namespace.yaml
   - dashboard.yaml
+  - rolebinding.yaml
