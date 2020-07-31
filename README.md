@@ -12,7 +12,7 @@ Terraform is _capable_ of managing kubernetes resources, but doing so requires y
 kubeconfig, which results in a sort of chicken and egg problem.  Many of the resources you would want
 to manage also require translating your manifests into HCL, which seems like a pain to manage.
 Thus, we encourage the use of terraform and AWS tooling to be confined as much as possible to managing
-the external state of EKS.
+the external state of EKS and the services we are creating for it.
 
 Once the cluster is up, we are using kubernetes-native tooling to manage EKS.  If we do need
 information from terraform, it is not too hard to create an output that generates yaml which we
@@ -60,10 +60,47 @@ Once argocd is done launching everything, these things should be running:
 
 ## How to set up a cluster
 
+XXX
+
 ## How to make changes to a cluster
+
+XXX
+
+## Management of multiple clusters
+
+XXX
 
 ## Getting Logs
 
+XXX
+
 ## Accessing pods
 
+XXX
+
 ## Security
+
+XXX
+
+# TODO
+* get email (SES) working
+* get assets/external hostnames working (s3/cloudfront? short term might be to pass in lb name somehow and use that)
+* get ACM or LE issuing certs
+* figure out how to get idp using SSL (puma, probably)
+* get pivcac going (could we make this be on all hosts?)
+* try to bug people into making config for the idp less crazy
+* get dashboard going so we can see how the cluster is doing with memory/CPU
+* get ALB ingress controller working instead of ELB?
+* find automated way to upgrade cluster node images besides going to the console and clicking the button
+* get ELK using SSL
+* get ELK importing from cloudtrail/cloudwatch
+* get alerting going:  elastalert?  metrics from newrelic or prometheus?
+* get outbound filtering going (https://monzo.com/blog/controlling-outbound-traffic-from-kubernetes)
+* figure out if we really need an IDP for everything, or if we can use IAM roles with port forwarding or a cert-auth proxy instead
+* really look at the somewhat baroque terraform state stuff that was basically lifted from identity-devops and see if we can make it less baroque
+* set up a "hub" cluster that manages the permanent clusters (basically, just set up IAM role and run deploy.sh)
+* Figure out how to buff up CI pipeline so that it does container scanning and does builds/tests when the base images are updated
+* Figure out how to get kms correlation engine going:  send kms logs into cloudwatch?  Rework engine to slurp from ELK?
+* make sure WAF is going on our services
+* clean up clamav logging (no noise)
+* dig into falco and make it's alerts useful to us (good canaries, no noise)
