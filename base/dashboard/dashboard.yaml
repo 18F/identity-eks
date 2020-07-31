@@ -283,8 +283,8 @@ spec:
   type: ClusterIP
   ports:
   - port: 443
-    targetPort: https
-    name: https
+    targetPort: http
+    name: http
   selector:
     app.kubernetes.io/name: kubernetes-dashboard
     app.kubernetes.io/instance: dashboard
@@ -347,10 +347,9 @@ spec:
         imagePullPolicy: IfNotPresent
         args:
           - --namespace=kubernetes-dashboard
-          - --auto-generate-certificates
         ports:
-        - name: https
-          containerPort: 8443
+        - name: http
+          containerPort: 9090
           protocol: TCP
         volumeMounts:
         - name: kubernetes-dashboard-certs
@@ -360,9 +359,9 @@ spec:
           name: tmp-volume
         livenessProbe:
           httpGet:
-            scheme: HTTPS
+            scheme: HTTP
             path: /
-            port: 8443
+            port: 9090
           initialDelaySeconds: 30
           timeoutSeconds: 30
         resources:

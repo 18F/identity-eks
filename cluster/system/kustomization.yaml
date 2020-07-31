@@ -3,4 +3,5 @@ resources:
   - clamav.yaml
   - elk.yaml
   - filebeat.yaml
+  - dashboard.yaml
 

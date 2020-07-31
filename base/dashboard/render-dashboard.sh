@@ -8,5 +8,5 @@ helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
 helm repo update
 
 kubectl config set-context --current --namespace=kubernetes-dashboard
-helm template dashboard kubernetes-dashboard/kubernetes-dashboard > dashboard.yaml
+helm template dashboard kubernetes-dashboard/kubernetes-dashboard -f dashboard-values.yaml > dashboard.yaml
 
