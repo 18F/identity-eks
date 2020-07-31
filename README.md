@@ -89,7 +89,7 @@ XXX
 * figure out how to get idp using SSL (puma, probably)
 * get pivcac going (could we make this be on all hosts?)
 * try to bug people into making config for the idp less crazy
-* get dashboard going so we can see how the cluster is doing with memory/CPU
+* DONE:  get dashboard going so we can see how the cluster is doing with memory/CPU
 * get ALB ingress controller working instead of ELB?
 * find automated way to upgrade cluster node images besides going to the console and clicking the button
 * get ELK using SSL
