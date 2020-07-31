@@ -1,0 +1,6 @@
+resources:
+  - falco.yaml
+  - clamav.yaml
+  - elk.yaml
+  - filebeat.yaml
+

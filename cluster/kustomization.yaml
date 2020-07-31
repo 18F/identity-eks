@@ -1,0 +1,16 @@
+resources:
+  - ../base/argocd/
+  - ./system/
+  - ./idp/
+
+# This is an example of how you can make a cluster's applications all point at
+# a particular branch instead of HEAD
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/source/targetRevision
+      value: HEAD
+  target:
+    namespace: argocd
+    kind: Application
+
