@@ -1,13 +1,54 @@
+# These are extra rules to allow the dashboard readonly access,
+# since the view role doesn't cover everything.
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dashboardview
+rules:
+- apiGroups: [""]
+  resources: ["customresourcedefinitions"]
+  verbs: ["list"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["list"]
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["list"]
+- apiGroups: [""]
+  resources: ["storageclasses"]
+  verbs: ["list"]
+- apiGroups: [""]
+  resources: ["persistentvolumes"]
+  verbs: ["list"]
+- apiGroups: [""]
+  resources: ["clusterroles"]
+  verbs: ["list"]
+
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kubernetes-dashboard
+  name: kubernetes-dashboard-view
   namespace: kubernetes-dashboard
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  #name: cluster-admin
   name: view
+subjects:
+  - kind: ServiceAccount
+    name: dashboard-kubernetes-dashboard
+    namespace: kubernetes-dashboard
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard-dashboardview
+  namespace: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dashboardview
 subjects:
   - kind: ServiceAccount
     name: dashboard-kubernetes-dashboard
