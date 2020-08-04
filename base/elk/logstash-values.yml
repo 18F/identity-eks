@@ -12,8 +12,11 @@ service:
       targetPort: 8080
 
 logstashConfig:
-  logstash.yml: |-
+  logstash.yml: |
      http.host: "0.0.0.0"
+
+logstashPipeline:
+  json.conf: |
      filter {
        if [message] =~ "^\{" {
          json {
