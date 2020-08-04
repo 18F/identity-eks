@@ -1,0 +1,7 @@
+
+args:
+  - /metrics-server
+  - --v=2
+  - --kubelet-preferred-address-types=InternalIP
+  - --kubelet-insecure-tls
+

@@ -166,6 +166,10 @@ spec:
             - --cert-dir=/tmp
             - --logtostderr
             - --secure-port=8443
+            - /metrics-server
+            - --v=2
+            - --kubelet-preferred-address-types=InternalIP
+            - --kubelet-insecure-tls
           ports:
           - containerPort: 8443
             name: https
