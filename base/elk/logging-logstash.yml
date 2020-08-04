@@ -112,7 +112,7 @@ spec:
         heritage: "Helm"
         release: "logstash"
       annotations:
-        configchecksum: 1e980342c79087f8a544af4d5eaf182d735d24796960c32171dbd0cbe0eedab
+        configchecksum: 29b09dc58292661ba75d6e8930de7fa7c66c9894defc5feb1ff9eb36e5f3f4e
     spec:
       securityContext:
         fsGroup: 1000
