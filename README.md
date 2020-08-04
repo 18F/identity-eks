@@ -86,6 +86,7 @@ XXX
 * get email (SES) working
 * get assets/external hostnames working (s3/cloudfront? short term might be to pass in lb name somehow and use that)
 * get ACM or LE issuing certs
+* figure out secrets strategy (use k8s secrets with kms backend?  vault?  s3 bucket?)
 * figure out how to get idp using SSL (puma, probably)
 * get pivcac going (could we make this be on all hosts?)
 * try to bug people into making config for the idp less crazy
@@ -94,10 +95,11 @@ XXX
 * find automated way to upgrade cluster node images besides going to the console and clicking the button
 * get ELK using SSL
 * get ELK importing from cloudtrail/cloudwatch
+* set ELK up to use higher performance storage (it's own nodegroup with fast nodes, use fast local storage instead of EBS)
 * get alerting going:  elastalert?  metrics from newrelic or prometheus?
-* get outbound filtering going (https://monzo.com/blog/controlling-outbound-traffic-from-kubernetes)
-* figure out if we really need an IDP for everything, or if we can use IAM roles with port forwarding or a cert-auth proxy instead
-* really look at the somewhat baroque terraform state stuff that was basically lifted from identity-devops and see if we can make it less baroque
+* get outbound filtering going (https://monzo.com/blog/controlling-outbound-traffic-from-kubernetes https://github.com/monzo/egress-operator)
+* figure out if we really need an IDP for auth, or if we can use IAM roles with port forwarding or a cert-auth proxy instead
+* really look at the somewhat baroque terraform state stuff that was basically lifted from identity-devops and see if we can make it less ugly
 * set up a "hub" cluster that manages the permanent clusters (basically, just set up IAM role and run deploy.sh)
 * Figure out how to buff up CI pipeline so that it does container scanning and does builds/tests when the base images are updated
 * Figure out how to get kms correlation engine going:  send kms logs into cloudwatch?  Rework engine to slurp from ELK?
