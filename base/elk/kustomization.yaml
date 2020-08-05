@@ -4,3 +4,7 @@ resources:
 - logging-elasticsearch.yml
 - logging-kibana.yml
 - logging-logstash.yml
+
+commonAnnotations:
+  linkerd.io/inject: enabled
+

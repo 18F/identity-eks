@@ -1,3 +1,6 @@
 namespace: kube-system
 resources:
   - clamav-daemonset.yml
+commonAnnotations:
+  linkerd.io/inject: enabled
+

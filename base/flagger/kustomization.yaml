@@ -7,3 +7,6 @@ bases:
   - github.com/weaveworks/flagger/kustomize/base/prometheus
 patchesStrategicMerge:
   - flagger-patch.yaml
+commonAnnotations:
+  linkerd.io/inject: enabled
+
