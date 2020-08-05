@@ -101,6 +101,7 @@ XXX
 * figure out if we really need an IDP for auth, or if we can use IAM roles with port forwarding or a cert-auth proxy instead
 * really look at the somewhat baroque terraform state stuff that was basically lifted from identity-devops and see if we can make it less ugly
 * set up a "hub" cluster that manages the permanent clusters (basically, just set up IAM role and run deploy.sh)
+* make sure we have a good node/cluster update strategy:  https://docs.aws.amazon.com/cli/latest/reference/eks/update-nodegroup-version.html and the cluster version in the tf code
 * Figure out how to buff up CI pipeline so that it does container scanning and does builds/tests when the base images are updated
 * Figure out how to get kms correlation engine going:  send kms logs into cloudwatch?  Rework engine to slurp from ELK?
 * make sure WAF is going on our services
