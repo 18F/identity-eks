@@ -28,3 +28,11 @@ $$.
 The proper way to do this seems to be documented in a few ways here:
 https://serverfault.com/questions/955293/how-to-increase-disk-size-in-a-stateful-set
 
+
+## linkerd
+
+Linkerd is enabled by adding the annotation to `kustomization.yaml`.  Every
+pod wil get started up and automagically get mTLS wrapped connections for all
+http traffic.  Unfortunately, the transport protocol on port 9300 on elasticsearch
+cannot be proxied because it's not really http, but something else.
+
