@@ -5,6 +5,6 @@ resources:
 - logging-kibana.yml
 - logging-logstash.yml
 
-#commonAnnotations:
-#  linkerd.io/inject: enabled
+commonAnnotations:
+  linkerd.io/inject: enabled
 
