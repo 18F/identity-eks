@@ -8,9 +8,9 @@ cd ..
 ./deploy.sh <clustername>
 ```
 
-As of this writing, falco needs to use the falcosecurity/falco:0.18.0 image to
-work in EKS.  Let us hope this changes someday.  When that happens, you probably
-will be able to zero out the `falco-values.yml` file and re-render.
+Sometimes, falco doesn't work because the image that it needs isn't there yet.
+Like:  https://github.com/falcosecurity/falco/issues/1335 for example.
+We need to get testing going here or something.
 
 Once deployed, Falco alerts will appear in the log stream for your review.
 
