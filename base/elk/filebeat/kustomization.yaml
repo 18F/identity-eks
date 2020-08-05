@@ -2,6 +2,6 @@ namespace: kube-system
 resources:
 - logging-filebeat.yml
 
-commonAnnotations:
-  linkerd.io/inject: enabled
+#commonAnnotations:
+#  linkerd.io/inject: enabled
 
