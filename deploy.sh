@@ -79,7 +79,7 @@ if kubectl describe sc ebs >/dev/null ; then
 	echo ebs persistant storage already set up
 else
 	kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master"
-	kubectl apply -f "$RUN_BASE/install/ebs_storage_class.yml"
+	kubectl apply -f "$RUN_BASE/base/aws-ebs-csi-driver/ebs_storage_class.yml"
 fi
 if kubectl get sc | grep -E '^gp2.*default' >/dev/null ; then
 	kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
