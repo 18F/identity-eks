@@ -83,6 +83,7 @@ XXX
 XXX
 
 # TODO
+* figure out how to make database optional, so that we can deploy the `cluster-elk` type of cluster without a db.
 * get email (SES) working
 * get assets/external hostnames working (s3/cloudfront? short term might be to pass in lb name somehow and use that)
 * get ACM or LE issuing certs
