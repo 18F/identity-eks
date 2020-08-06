@@ -86,15 +86,10 @@ if kubectl get sc | grep -E '^gp2.*default' >/dev/null ; then
   kubectl patch storageclass ebs -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 fi
 
-# set up initial cert for linkerd
-#kubectl create namespace linkerd && true
-#step certificate create identity.linkerd.cluster.local ca.crt ca.key \
-#  --profile root-ca --no-password --insecure &&
-#  kubectl create secret tls \
-#   linkerd-trust-anchor \
-#   --cert=ca.crt \
-#   --key=ca.key \
-#   --namespace=linkerd
+# install linkerd
+pushd "$RUN_BASE/base/linkerd/"
+./install-linkerd.sh
+popd
 
 # apply k8s config for this cluster
 if [ -z "$2" ] ; then
