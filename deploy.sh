@@ -36,6 +36,7 @@ REQUIREDBINARIES="
      kubectl
      jq
      step
+     kustomize
 "
 for i in ${REQUIREDBINARIES} ; do
      checkbinary "$i"
@@ -82,8 +83,8 @@ else
 	kubectl apply -f "$RUN_BASE/install/ebs_storage_class.yml"
 fi
 if kubectl get sc | grep -E '^gp2.*default' >/dev/null ; then
-	kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
-  kubectl patch storageclass ebs -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+    kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+    kubectl patch storageclass ebs -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 fi
 
 # set up initial cert for linkerd
