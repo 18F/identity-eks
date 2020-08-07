@@ -4,7 +4,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: metrics-server
-  namespace: kube-system
+  namespace: metrics-server
   labels:
     app: metrics-server
     chart: metrics-server-2.11.1
@@ -69,7 +69,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: metrics-server
-    namespace: kube-system
+    namespace: metrics-server
 ---
 # Source: metrics-server/templates/metrics-server-crb.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -88,7 +88,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: metrics-server
-    namespace: kube-system
+    namespace: metrics-server
 ---
 # Source: metrics-server/templates/role-binding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -108,14 +108,14 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: metrics-server
-    namespace: kube-system
+    namespace: metrics-server
 ---
 # Source: metrics-server/templates/metric-server-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: metrics-server
-  namespace: kube-system
+  namespace: metrics-server
   labels:
     app: metrics-server
     chart: metrics-server-2.11.1
@@ -138,7 +138,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: metrics-server
-  namespace: kube-system
+  namespace: metrics-server
   labels:
     app: metrics-server
     chart: metrics-server-2.11.1
@@ -222,7 +222,7 @@ metadata:
 spec:
   service:
     name: metrics-server
-    namespace: kube-system
+    namespace: metrics-server
   group: metrics.k8s.io
   version: v1beta1
   insecureSkipTLSVerify: true

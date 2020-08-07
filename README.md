@@ -96,7 +96,7 @@ XXX
 * find automated way to upgrade cluster node images besides going to the console and clicking the button
 * get ELK using SSL (basically done with linkerd, though need to look at 9300 until https://github.com/linkerd/linkerd2/issues/3207 is going.  Suspect we can just create a certmanager ca and issue certs that are used for this)
 * get ELK importing from cloudtrail/cloudwatch
-* set ELK up to use higher performance storage (it's own nodegroup with fast nodes, use fast local storage instead of EBS)
+* set ELK up to perform well (own nodegroup with fast local storage? Or maybe just request io1 storage?  Maybe look at CPU limits too? Since we have PVs, we don't need to worry about resyncing anymore, though)
 * get alerting going:  elastalert?  metrics from newrelic or prometheus?
 * get outbound filtering going (https://monzo.com/blog/controlling-outbound-traffic-from-kubernetes https://github.com/monzo/egress-operator)
 * figure out if we really need an IDP for auth, or if we can use IAM roles with port forwarding or a cert-auth proxy instead

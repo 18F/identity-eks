@@ -1,4 +1,6 @@
+namespace: metrics-server
 resources:
+  - namespace.yaml
   - metrics-server.yml
 commonAnnotations:
   linkerd.io/inject: enabled
