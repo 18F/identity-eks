@@ -4,5 +4,5 @@ resources:
 
 commonAnnotations:
   #linkerd.io/inject: enabled
-  #consul.hashicorp.com/connect-inject: 'true'
+  consul.hashicorp.com/connect-inject: 'true'
 
