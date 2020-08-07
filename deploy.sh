@@ -87,15 +87,15 @@ if kubectl get sc | grep -E '^gp2.*default' >/dev/null ; then
     kubectl patch storageclass ebs -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 fi
 
-# set up initial cert for linkerd
-#kubectl create namespace linkerd && true
-#step certificate create identity.linkerd.cluster.local ca.crt ca.key \
-#  --profile root-ca --no-password --insecure &&
-#  kubectl create secret tls \
-#   linkerd-trust-anchor \
-#   --cert=ca.crt \
-#   --key=ca.key \
-#   --namespace=linkerd
+# install linkerd
+# XXX this has to be done here rather than as an application, since
+# the linkerd helm chart puts the trust anchor key right in it, so we can't check
+# it in.  Ideally, we have certmanager do this, and there is some discussion
+# about this here: https://github.com/linkerd/linkerd2/issues/3745 but it is
+# not yet happening.
+pushd "$RUN_BASE/base/linkerd/"
+./install-linkerd.sh
+popd
 
 # apply k8s config for this cluster
 if [ -z "$2" ] ; then

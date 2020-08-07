@@ -1,2 +1,3 @@
 resources:
-  - linkerd.yaml
+  - namespace.yaml
+  - certmanager.yaml
