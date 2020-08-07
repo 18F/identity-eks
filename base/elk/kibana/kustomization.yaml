@@ -3,7 +3,7 @@ resources:
 - kibana.yml
 
 commonAnnotations:
-  #linkerd.io/inject: enabled
-  consul.hashicorp.com/connect-inject: 'true'
-  consul.hashicorp.com/connect-service-upstreams: 'elasticsearch-master:9200'
+  linkerd.io/inject: enabled
+  #consul.hashicorp.com/connect-inject: 'true'
+  #consul.hashicorp.com/connect-service-upstreams: 'elasticsearch-master:9200'
 
