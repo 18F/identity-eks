@@ -23,6 +23,7 @@ metadata:
     release: "filebeat"
 data:
   filebeat.yml: |
+    logging.level: debug
     filebeat.inputs:
     - type: docker
       containers.ids:
@@ -108,7 +109,7 @@ spec:
     metadata:
       annotations:
         
-        configChecksum: a29a1cd5dab913d0a76d9ed76333107fdca0fe375ccf330ae4768876bc93b0e
+        configChecksum: 765e2422277dc98a78ae9ebe7df21df07089fa012a07c220ebb6f7c4f559267
       name: "filebeat-filebeat"
       labels:
         app: "filebeat-filebeat"
