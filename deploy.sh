@@ -88,6 +88,11 @@ if kubectl get sc | grep -E '^gp2.*default' >/dev/null ; then
 fi
 
 # install linkerd
+# XXX this has to be done here rather than as an application, since
+# the linkerd helm chart puts the trust anchor key right in it, so we can't check
+# it in.  Ideally, we have certmanager do this, and there is some discussion
+# about this here: https://github.com/linkerd/linkerd2/issues/3745 but it is
+# not yet happening.
 pushd "$RUN_BASE/base/linkerd/"
 ./install-linkerd.sh
 popd
