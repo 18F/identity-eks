@@ -88,13 +88,13 @@ XXX
 * get assets/external hostnames working (s3/cloudfront? short term might be to pass in lb name somehow and use that)
 * get ACM or LE issuing certs
 * figure out secrets strategy (use k8s secrets with kms backend?  vault?  s3 bucket?)
-* figure out how to get idp using SSL (puma, probably)
+* figure out how to get idp using SSL (puma, maybe, though linkerd seems to ssl-ize stuff, so maybe we just need an ingress controller to be linkerd-ized, and boom?)
 * get pivcac going (could we make this be on all hosts?)
 * try to bug people into making config for the idp less crazy
 * DONE:  get dashboard going so we can see how the cluster is doing with memory/CPU
 * get ALB ingress controller working instead of ELB?
 * find automated way to upgrade cluster node images besides going to the console and clicking the button
-* get ELK using SSL
+* get ELK using SSL (basically done with linkerd, though need to look at 9300 until https://github.com/linkerd/linkerd2/issues/3207 is going.  Suspect we can just create a certmanager ca and issue certs that are used for this)
 * get ELK importing from cloudtrail/cloudwatch
 * set ELK up to use higher performance storage (it's own nodegroup with fast nodes, use fast local storage instead of EBS)
 * get alerting going:  elastalert?  metrics from newrelic or prometheus?
