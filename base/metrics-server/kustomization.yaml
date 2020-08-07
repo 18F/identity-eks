@@ -1,6 +1,5 @@
-namespace: metrics-server
+namespace: kube-system
 resources:
-  - namespace.yaml
   - metrics-server.yml
 commonAnnotations:
   linkerd.io/inject: enabled
