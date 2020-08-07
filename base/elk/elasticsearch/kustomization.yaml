@@ -7,4 +7,6 @@ commonAnnotations:
   #config.linkerd.io/skip-inbound-ports: "9300"
   #config.linkerd.io/skip-outbound-ports: "9300"
   consul.hashicorp.com/connect-inject: 'true'
+  consul.hashicorp.com/connect-service-upstreams: 'elasticsearch:9200'
+  consul.hashicorp.com/connect-service-upstreams: 'elasticsearch:9300'
 
