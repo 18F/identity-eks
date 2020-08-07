@@ -1,5 +1,6 @@
 filebeatConfig:
   filebeat.yml: |
+    logging.level: debug
     filebeat.inputs:
     - type: docker
       containers.ids:
