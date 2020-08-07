@@ -1,0 +1,9 @@
+global:
+  name: consul
+
+connectInject:
+  enabled: true
+
+client:
+  enabled: true
+

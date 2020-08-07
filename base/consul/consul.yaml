@@ -32,6 +32,18 @@ metadata:
     heritage: Helm
     release: consul
 ---
+# Source: consul/templates/connect-inject-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: consul-connect-injector-webhook-svc-account
+  namespace: consul
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: consul
+---
 # Source: consul/templates/server-serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -60,6 +72,11 @@ metadata:
 data:
   extra-from-values.json: |-
     {}
+    
+  central-config.json: |-
+    {
+      "enable_central_service_config": true
+    }
 ---
 # Source: consul/templates/server-config-configmap.yaml
 # StatefulSet to run the actual Consul server cluster.
@@ -76,6 +93,50 @@ metadata:
 data:
   extra-from-values.json: |-
     {}
+    
+  central-config.json: |-
+    {
+      "enable_central_service_config": true
+    }
+---
+# Source: consul/templates/connect-inject-clusterrole.yaml
+# The ClusterRole to enable the Connect injector to get, list, watch and patch MutatingWebhookConfiguration.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: consul-connect-injector-webhook
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: consul
+rules:
+- apiGroups: ["admissionregistration.k8s.io"]
+  resources: ["mutatingwebhookconfigurations"]
+  verbs: 
+    - "get"
+    - "list"
+    - "watch"
+    - "patch"
+---
+# Source: consul/templates/connect-inject-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: consul-connect-injector-webhook-admin-role-binding
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: consul
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: consul-connect-injector-webhook
+subjects:
+  - kind: ServiceAccount
+    name: consul-connect-injector-webhook-svc-account
+    namespace: consul
 ---
 # Source: consul/templates/client-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -140,6 +201,27 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: consul-server
+---
+# Source: consul/templates/connect-inject-service.yaml
+# The service for the Connect sidecar injector
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-connect-injector-svc
+  namespace: consul
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: consul
+spec:
+  ports:
+  - port: 443
+    targetPort: 8080
+  selector:
+    app: consul
+    release: "consul"
+    component: connect-injector
 ---
 # Source: consul/templates/dns-service.yaml
 # Service for Consul DNS.
@@ -384,6 +466,96 @@ spec:
               cpu: 100m
               memory: 100Mi
 ---
+# Source: consul/templates/connect-inject-deployment.yaml
+# The deployment for running the Connect sidecar injector
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consul-connect-injector-webhook-deployment
+  namespace: consul
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: consul
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consul
+      chart: consul-helm
+      release: consul
+      component: connect-injector
+  template:
+    metadata:
+      labels:
+        app: consul
+        chart: consul-helm
+        release: consul
+        component: connect-injector
+      annotations:
+        "consul.hashicorp.com/connect-inject": "false"
+    spec:
+      serviceAccountName: consul-connect-injector-webhook-svc-account
+      containers:
+        - name: sidecar-injector
+          image: "hashicorp/consul-k8s:0.18.0"
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          command:
+            - "/bin/sh"
+            - "-ec"
+            - |
+              CONSUL_FULLNAME="consul"
+
+              consul-k8s inject-connect \
+                -default-inject=false \
+                -consul-image="consul:1.8.1" \
+                -consul-k8s-image="hashicorp/consul-k8s:0.18.0" \
+                -listen=:8080 \
+                -enable-central-config=true \
+                -allow-k8s-namespace="*" \
+                -tls-auto=${CONSUL_FULLNAME}-connect-injector-cfg \
+                -tls-auto-hosts=${CONSUL_FULLNAME}-connect-injector-svc,${CONSUL_FULLNAME}-connect-injector-svc.${NAMESPACE},${CONSUL_FULLNAME}-connect-injector-svc.${NAMESPACE}.svc \
+                -init-container-memory-limit=150Mi \
+                -init-container-memory-request=25Mi \
+                -init-container-cpu-limit=50m \
+                -init-container-cpu-request=50m \
+                -lifecycle-sidecar-memory-limit=50Mi \
+                -lifecycle-sidecar-memory-request=25Mi \
+                -lifecycle-sidecar-cpu-limit=20m \
+                -lifecycle-sidecar-cpu-request=20m \
+          livenessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+              scheme: HTTPS
+            failureThreshold: 2
+            initialDelaySeconds: 1
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+              scheme: HTTPS
+            failureThreshold: 2
+            initialDelaySeconds: 2
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 50m
+              memory: 50Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi
+---
 # Source: consul/templates/server-statefulset.yaml
 # StatefulSet to run the actual Consul server cluster.
 apiVersion: apps/v1
@@ -529,6 +701,32 @@ spec:
         resources:
           requests:
             storage: 10Gi
+---
+# Source: consul/templates/connect-inject-mutatingwebhook.yaml
+# The MutatingWebhookConfiguration to enable the Connect injector.
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: consul-connect-injector-cfg
+  namespace: consul
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: consul
+webhooks:
+  - name: consul-connect-injector.consul.hashicorp.com
+    clientConfig:
+      service:
+        name: consul-connect-injector-svc
+        namespace: consul
+        path: "/mutate"
+      caBundle: ""
+    rules:
+      - operations: [ "CREATE" ]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
 ---
 # Source: consul/templates/tests/test-runner.yaml
 apiVersion: v1
