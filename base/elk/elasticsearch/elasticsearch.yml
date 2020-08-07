@@ -267,7 +267,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "elasticsearch-logging-umdlk-test"
+  name: "elasticsearch-logging-nzhka-test"
   annotations:
     "helm.sh/hook": test-success
 spec:
@@ -275,7 +275,7 @@ spec:
     fsGroup: 1000
     runAsUser: 1000
   containers:
-  - name: "elasticsearch-logging-eqpfn-test"
+  - name: "elasticsearch-logging-jrwzp-test"
     image: "docker.elastic.co/elasticsearch/elasticsearch:7.8.1"
     imagePullPolicy: "IfNotPresent"
     command:

@@ -8,10 +8,10 @@ helm repo add elastic https://helm.elastic.co
 helm repo update
 kubectl config set-context --current --namespace=elk
 
-helm template elasticsearch-logging elastic/elasticsearch -f elasticsearch-values.yml > logging-elasticsearch.yml
-helm template kibana elastic/kibana > logging-kibana.yml
-helm template logstash elastic/logstash -f logstash-values.yml > logging-logstash.yml
+helm template elasticsearch-logging elastic/elasticsearch -f elasticsearch-values.yml > elasticsearch/elasticsearch.yml
+helm template kibana elastic/kibana > kibana/kibana.yml
+helm template logstash elastic/logstash -f logstash-values.yml > logstash/logstash.yml
 
 kubectl config set-context --current --namespace=kube-system
-helm template filebeat elastic/filebeat -f filebeat-values.yml --namespace kube-system > filebeat/logging-filebeat.yml
+helm template filebeat elastic/filebeat -f filebeat-values.yml --namespace kube-system > filebeat/filebeat.yml
 

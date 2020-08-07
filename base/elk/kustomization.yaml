@@ -1,13 +1,6 @@
-namespace: elk
 resources:
 - namespace.yaml
-- logging-elasticsearch.yml
-- logging-kibana.yml
-- logging-logstash.yml
-
-commonAnnotations:
-  #linkerd.io/inject: enabled
-  #config.linkerd.io/skip-inbound-ports: "9300"
-  #config.linkerd.io/skip-outbound-ports: "9300"
-  consul.hashicorp.com/connect-inject: 'true'
+- elasticsearch
+- kibana
+- logstash
 

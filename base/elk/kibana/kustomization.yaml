@@ -1,6 +1,6 @@
-namespace: kube-system
+namespace: elk
 resources:
-- filebeat.yml
+- kibana.yml
 
 commonAnnotations:
   #linkerd.io/inject: enabled
