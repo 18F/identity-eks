@@ -7,3 +7,6 @@ connectInject:
 client:
   enabled: true
 
+syncCatalog:
+  enabled: true
+
