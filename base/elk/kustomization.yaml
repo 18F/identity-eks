@@ -3,4 +3,5 @@ resources:
 - elasticsearch
 - kibana
 - logstash
+- networking.yaml
 
