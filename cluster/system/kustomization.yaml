@@ -1,4 +1,5 @@
 resources:
+  - cert-manager-ns.yaml
   - cert-manager.yaml
   - falco.yaml
   - clamav.yaml
