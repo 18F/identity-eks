@@ -15,11 +15,24 @@ Consul would never inject itself into anything running in kube-system, so
 filebeat couldn't get automagically SSL-ized.
 
 I couldn't find a way to see connection rates or how many connections
-were going on in the cluster.
+were going on in the cluster.  Like there's no connection logging
+facilities at all, it seems, though perhaps jaeger might do this.
+It was not obvious how to get that going.
 
-I'm not 100% sure, but I don't think that consul did any iptables/CNI
-stuff to get connections into the proxy.  I think you needed to plug
-those in by hand so that it would set some environment variables which
-would let you discover that the services were living on the proxy,
-ala https://unofficial-kubernetes.readthedocs.io/en/latest/concepts/services-networking/service/#discovering-services
+It appears as if it doesn't really discover all the services that are
+being used in ELK, so it's not really able to wrap everything
+automagically.  It will probably require some wacky kustomize variable
+substitution kind of stuff to make this work.  For instance, if you
+start it up and inject it, it will recognize these services
+* elasticsearch
+* elasticsearch-master-elk
+* elasticsearch-master-headless-elk
+* elasticsearch-sidecar-proxy
+* kibana
+* kibana-kibana-elk
+* kibana-sidecar-proxy
+
+But ES talks node to node on elasticsearch-master-X and does cluster
+discovery using elasticsearch-master-headless.  So none of these services
+are getting proxied.
 

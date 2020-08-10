@@ -3,6 +3,5 @@ resources:
 - filebeat.yml
 
 commonAnnotations:
-  #linkerd.io/inject: enabled
-  consul.hashicorp.com/connect-inject: 'true'
+  linkerd.io/inject: enabled
 
