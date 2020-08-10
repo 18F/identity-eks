@@ -2,6 +2,10 @@
 
 https://linkerd.io/2/overview/
 
+To get a dashboard, just make sure you have linkerd installed locally
+(`brew install linkerd`) and then say
+`aws-vault exec sandbox-admin -- linkerd dashboard &`.  Cool!
+
 ## Pros
 
 Linkerd is a super cool service mesh that lets you wrap everything with mTLS
