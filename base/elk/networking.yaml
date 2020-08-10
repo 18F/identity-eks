@@ -12,7 +12,7 @@ spec:
   ingress:
   - from:
     - podSelector: {}
-    ports:
+    ports: &consulports
     - protocol: TCP
       port: 8600
     - protocol: UDP
@@ -34,31 +34,60 @@ spec:
     - protocol: TCP
       port: 8300
     - protocol: TCP
-      port: 21000-21255
+      port: 21000
+    - protocol: TCP
+      port: 21001
+    - protocol: TCP
+      port: 21002
+    - protocol: TCP
+      port: 21003
+    - protocol: TCP
+      port: 21004
+    - protocol: TCP
+      port: 21005
+    - protocol: TCP
+      port: 21006
+    - protocol: TCP
+      port: 21007
+    - protocol: TCP
+      port: 21008
+    - protocol: TCP
+      port: 21009
+    - protocol: TCP
+      port: 21010
+    - protocol: TCP
+      port: 21011
+    - protocol: TCP
+      port: 21012
+    - protocol: TCP
+      port: 21013
+    - protocol: TCP
+      port: 21014
+    - protocol: TCP
+      port: 21015
+    - protocol: TCP
+      port: 21016
+    - protocol: TCP
+      port: 21017
+    - protocol: TCP
+      port: 21018
+    - protocol: TCP
+      port: 21019
+    - protocol: TCP
+      port: 21020
+    - protocol: TCP
+      port: 21021
+    - protocol: TCP
+      port: 21022
+    - protocol: TCP
+      port: 21023
+    - protocol: TCP
+      port: 21024
+    - protocol: TCP
+      port: 21025
   egress:
   - to:
     - podSelector: {}
     ports:
-    - protocol: TCP
-      port: 8600
-    - protocol: UDP
-      port: 8600
-    - protocol: TCP
-      port: 8500
-    - protocol: TCP
-      port: 8501
-    - protocol: TCP
-      port: 8502
-    - protocol: TCP
-      port: 8301
-    - protocol: UDP
-      port: 8301
-    - protocol: TCP
-      port: 8302
-    - protocol: UDP
-      port: 8302
-    - protocol: TCP
-      port: 8300
-    - protocol: TCP
-      port: 21000-21255
+      *consulports
 
