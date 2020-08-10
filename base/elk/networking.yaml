@@ -1,4 +1,16 @@
 ---
+# default deny
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+# This is from https://www.consul.io/docs/install/ports
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
