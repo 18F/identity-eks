@@ -9,3 +9,5 @@ helm template flagger flagger/flagger \
     --set meshProvider=linkerd \
     --set metricsServer=http://linkerd-prometheus:9090 > flagger.yaml
 
+curl -s https://raw.githubusercontent.com/weaveworks/flagger/master/artifacts/flagger/crd.yaml > flagger-crd.yaml
+

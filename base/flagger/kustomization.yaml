@@ -1,4 +1,5 @@
 resources:
+  - flagger-crd.yaml
   - flagger.yaml
 
 commonAnnotations:
