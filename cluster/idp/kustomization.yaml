@@ -2,4 +2,3 @@ resources:
   - namespace.yaml
   - project.yaml
   - application.yaml
-  - flagger.yaml

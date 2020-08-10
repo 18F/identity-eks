@@ -6,4 +6,5 @@ resources:
   - filebeat.yaml
   - dashboard.yaml
   - metrics-server.yaml
+  - flagger.yaml
 
