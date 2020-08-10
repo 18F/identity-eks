@@ -13,20 +13,9 @@ spec:
 
   # Source of the application manifests
   source:
-    repoURL: https://github.com/18F/identity-eks.git
-    targetRevision: HEAD
-    path: base/cert-manager
-
-    # kustomize specific config
-    kustomize:
-      # Optional kustomize version. Note: version must be configured in argocd-cm ConfigMap
-      version: default
-      # Optional image name prefix
-      #namePrefix: system-
-      # Optional images passed to "kustomize edit set image".
-      #images:
-      #- logindotgov/pretend-app
-
+    repoURL: https://charts.jetstack.io
+    targetRevision: 0.16.1
+    chart: cert-manager
 
   # Destination cluster and namespace to deploy the application
   destination:
@@ -43,7 +32,8 @@ spec:
 
   # Ignore differences at the specified json pointers
   ignoreDifferences:
-  - group: apps
-    kind: Deployment
-    jsonPointers:
-    - /spec/replicas
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      jsonPointers:
+        - /status
+
