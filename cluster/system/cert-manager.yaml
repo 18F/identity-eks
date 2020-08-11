@@ -14,8 +14,21 @@ spec:
   # Source of the application manifests
   source:
     repoURL: https://charts.jetstack.io
+    # You should probably also go get the latest crds.  For this version, you can get them with
+    # wget https://github.com/jetstack/cert-manager/releases/download/v0.16.1/cert-manager.crds.yaml
     targetRevision: 0.16.1
     chart: cert-manager
+    helm:
+      values: |
+        podAnnotations:
+          linkerd.io/inject: enabled
+        webhook:
+          podAnnotations:
+            linkerd.io/inject: enabled
+        cainjector:
+          podAnnotations:
+            linkerd.io/inject: enabled
+
 
   # Destination cluster and namespace to deploy the application
   destination:
@@ -25,7 +38,6 @@ spec:
   # Sync policy
   syncPolicy:
     automated:
-      prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
       selfHeal: true # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
     syncOptions:     # Sync options which modifies sync behavior
     - Validate=false # disables resource validation (equivalent to 'kubectl apply --validate=true')
