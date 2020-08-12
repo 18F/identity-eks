@@ -60,11 +60,52 @@ Once argocd is done launching everything, these things should be running:
 
 ## How to set up a cluster
 
-XXX
+To install a new cluster with the default cluster as described in the `cluster` directory deployed in it,
+run `./setup.sh your-clustername`.
+
+There are also a number of `cluster-*` directories which hold configuration for other kinds
+of clusters.  To set up one of those, you can run `./setup.sh your-clustername clustertype`,
+where `clustertype` is the suffix on the cluster dir that you want to apply.
+
+Example:  `./setup.sh devops-test elk`
 
 ## How to make changes to a cluster
 
-XXX
+There are three kinds of changes:
+* Changes to AWS/EKS setup/resources.
+* Changes to what applications you want deployed into a cluster.
+* Changes to the applications that are deployed in the cluster.
+
+### AWS changes
+
+We need to provision AWS resources, including an EKS cluster.  This is done with terraform, and
+it lives in the terraform directory.  Add what you need there and then run
+`./deploy.sh your-clustername`.
+
+If you need to pass in information about the resources you just created to EKS, look at the
+`terraform/outputs.tf` file.  You can look at some of the examples in there on how to create
+some different kinds of things like services or secrets that get used in EKS.  Once you have
+an output set up, make sure it's applied by editing `deploy.sh` and adding it in with the
+other outputs.  Then run `./deploy.sh your-clustername` to make it actually apply!
+
+### Cluster Applications
+
+When `./deploy.sh your-clustername` is run, it will essentially run `kustomize build cluster | kubectl apply -f -`.
+This means that you can use the powers of kustomize to configure all the things that get deployed
+to the cluster.  So you can add plain old yaml manifests there if you like, but it is probably better if
+you use argocd application manifests, because then you can just make changes to git, and argo will automatically
+sync what is in git into the cluster, instead of you having to manually run the deploy script.
+
+You can use helm in the application manifests too, but then you lose the ability to see what exactly is
+being deployed.  I think it's better to use application manifests that point at git repos which contain
+yaml that you want deployed, whether that yaml comes from `helm template` or is written by you.
+This is what _declarative_ really means.
+
+### Application changes
+
+If you have changes to the applications pointed to by the argo manifests, you can just make
+changes and check them in to git.  Once your changes are seen, argo will automatically deploy
+your changes.
 
 ## Management of multiple clusters
 
