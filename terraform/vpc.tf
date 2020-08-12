@@ -6,7 +6,7 @@
 #  * Route Table
 #
 
-resource "aws_vpc" "secops" {
+resource "aws_vpc" "eks" {
   cidr_block = "10.0.0.0/16"
 
   tags = map(
@@ -15,12 +15,12 @@ resource "aws_vpc" "secops" {
   )
 }
 
-resource "aws_subnet" "secops" {
+resource "aws_subnet" "eks" {
   count = 2
 
   availability_zone = data.aws_availability_zones.available.names[count.index]
   cidr_block        = "10.0.${count.index}.0/24"
-  vpc_id            = aws_vpc.secops.id
+  vpc_id            = aws_vpc.eks.id
   map_public_ip_on_launch = true
 
   tags = map(
@@ -31,28 +31,28 @@ resource "aws_subnet" "secops" {
   )
 }
 
-resource "aws_internet_gateway" "secops" {
-  vpc_id = aws_vpc.secops.id
+resource "aws_internet_gateway" "eks" {
+  vpc_id = aws_vpc.eks.id
 
   tags = {
     Name = var.cluster_name
   }
 }
 
-resource "aws_route_table" "secops" {
-  vpc_id = aws_vpc.secops.id
+resource "aws_route_table" "eks" {
+  vpc_id = aws_vpc.eks.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.secops.id
+    gateway_id = aws_internet_gateway.eks.id
   }
 }
 
-resource "aws_route_table_association" "secops" {
+resource "aws_route_table_association" "eks" {
   count = 2
 
-  subnet_id      = aws_subnet.secops.*.id[count.index]
-  route_table_id = aws_route_table.secops.id
+  subnet_id      = aws_subnet.eks.*.id[count.index]
+  route_table_id = aws_route_table.eks.id
 }
 
 resource "aws_db_subnet_group" "db" {
@@ -68,7 +68,7 @@ resource "aws_db_subnet_group" "db" {
 resource "aws_subnet" "db1" {
   availability_zone = data.aws_availability_zones.available.names[0]
   cidr_block        = "10.0.250.0/26"
-  vpc_id            = aws_vpc.secops.id
+  vpc_id            = aws_vpc.eks.id
   map_public_ip_on_launch = false
 
   tags = map(
@@ -79,7 +79,7 @@ resource "aws_subnet" "db1" {
 resource "aws_subnet" "db2" {
   availability_zone = data.aws_availability_zones.available.names[1]
   cidr_block        = "10.0.250.64/26"
-  vpc_id            = aws_vpc.secops.id
+  vpc_id            = aws_vpc.eks.id
   map_public_ip_on_launch = false
 
   tags = map(
@@ -96,7 +96,7 @@ resource "aws_elasticache_subnet_group" "redis" {
 resource "aws_subnet" "redis1" {
   availability_zone = data.aws_availability_zones.available.names[0]
   cidr_block        = "10.0.250.128/26"
-  vpc_id            = aws_vpc.secops.id
+  vpc_id            = aws_vpc.eks.id
   map_public_ip_on_launch = false
 
   tags = map(
@@ -107,7 +107,7 @@ resource "aws_subnet" "redis1" {
 resource "aws_subnet" "redis2" {
   availability_zone = data.aws_availability_zones.available.names[1]
   cidr_block        = "10.0.252.192/26"
-  vpc_id            = aws_vpc.secops.id
+  vpc_id            = aws_vpc.eks.id
   map_public_ip_on_launch = false
 
   tags = map(
@@ -124,7 +124,7 @@ resource "aws_security_group" "db" {
     from_port = 5432
     to_port   = 5432
     protocol  = "tcp"
-    security_groups = [aws_eks_cluster.secops.vpc_config[0].cluster_security_group_id]
+    security_groups = [aws_eks_cluster.eks.vpc_config[0].cluster_security_group_id]
   }
 
   name = "${var.cluster_name}-db"
@@ -133,7 +133,7 @@ resource "aws_security_group" "db" {
     Name = "${var.cluster_name}-db_security_group"
   }
 
-  vpc_id = aws_vpc.secops.id
+  vpc_id = aws_vpc.eks.id
 }
 
 resource "aws_security_group" "redis" {
@@ -143,7 +143,7 @@ resource "aws_security_group" "redis" {
     from_port = 6379
     to_port   = 6379
     protocol  = "tcp"
-    security_groups = [aws_eks_cluster.secops.vpc_config[0].cluster_security_group_id]
+    security_groups = [aws_eks_cluster.eks.vpc_config[0].cluster_security_group_id]
   }
 
   name = "${var.cluster_name}-redis"
@@ -152,5 +152,5 @@ resource "aws_security_group" "redis" {
     Name = "${var.cluster_name}-redis"
   }
 
-  vpc_id = aws_vpc.secops.id
+  vpc_id = aws_vpc.eks.id
 }

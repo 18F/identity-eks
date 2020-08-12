@@ -18,7 +18,7 @@ data "aws_region" "current" {}
 
 data "aws_availability_zones" "available" {}
 
-# secops data bucket where tf state and possibly other stuff is stored
+# data bucket where tf state and possibly other stuff is stored
 resource "aws_s3_bucket" "tf-state" {
   bucket = "login-dot-gov-secops.${data.aws_caller_identity.current.account_id}-${var.region}"
   region = var.region

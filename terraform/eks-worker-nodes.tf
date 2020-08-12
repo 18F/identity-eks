@@ -3,11 +3,11 @@
 #  * IAM role allowing Kubernetes actions to access other AWS services
 #  * EKS Node Group to launch worker nodes
 #
-resource "aws_eks_node_group" "secops" {
-  cluster_name    = aws_eks_cluster.secops.name
-  node_group_name = "secops-${var.cluster_name}"
-  node_role_arn   = aws_iam_role.secops-node.arn
-  subnet_ids      = aws_subnet.secops[*].id
+resource "aws_eks_node_group" "eks" {
+  cluster_name    = aws_eks_cluster.eks.name
+  node_group_name = "eks-${var.cluster_name}"
+  node_role_arn   = aws_iam_role.eks-node.arn
+  subnet_ids      = aws_subnet.eks[*].id
   instance_types  = ["t3a.large"]
 
   scaling_config {
@@ -19,13 +19,13 @@ resource "aws_eks_node_group" "secops" {
   disk_size = 120
 
   depends_on = [
-    aws_iam_role_policy_attachment.secops-node-AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.secops-node-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.secops-node-AmazonEC2ContainerRegistryReadOnly
+    aws_iam_role_policy_attachment.eks-node-AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.eks-node-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.eks-node-AmazonEC2ContainerRegistryReadOnly
   ]
 }
 
-resource "aws_iam_role" "secops-node" {
+resource "aws_iam_role" "eks-node" {
   name = "${var.cluster_name}-noderole"
 
   assume_role_policy = <<POLICY
@@ -46,28 +46,28 @@ POLICY
 
 resource "aws_iam_role_policy" "idp-ses-email" {
   name   = "${var.cluster_name}-idp-ses-email"
-  role       = aws_iam_role.secops-node.name
+  role       = aws_iam_role.eks-node.name
   policy = data.aws_iam_policy_document.ses_email_role_policy.json
 }
 
-resource "aws_iam_role_policy_attachment" "secops-node-AmazonEKSWorkerNodePolicy" {
+resource "aws_iam_role_policy_attachment" "eks-node-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = aws_iam_role.secops-node.name
+  role       = aws_iam_role.eks-node.name
 }
 
-resource "aws_iam_role_policy_attachment" "secops-node-AmazonEKS_CNI_Policy" {
+resource "aws_iam_role_policy_attachment" "eks-node-AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.secops-node.name
+  role       = aws_iam_role.eks-node.name
 }
 
-resource "aws_iam_role_policy_attachment" "secops-node-AmazonEC2ContainerRegistryReadOnly" {
+resource "aws_iam_role_policy_attachment" "eks-node-AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = aws_iam_role.secops-node.name
+  role       = aws_iam_role.eks-node.name
 }
 
 resource "aws_iam_role_policy" "ebs_csi_driver" {
   name = "ebs_csi_driver"
-  role = aws_iam_role.secops-node.id
+  role = aws_iam_role.eks-node.id
 
   policy = <<EOF
 {

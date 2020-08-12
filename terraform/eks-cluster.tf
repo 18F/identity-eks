@@ -4,13 +4,13 @@
 #  * EC2 Security Group to allow networking traffic with EKS cluster
 #  * EKS Cluster
 #
-resource "aws_eks_cluster" "secops" {
+resource "aws_eks_cluster" "eks" {
   name     = var.cluster_name
-  role_arn = aws_iam_role.secops-cluster.arn
+  role_arn = aws_iam_role.eks-cluster.arn
 
   vpc_config {
-    security_group_ids = [aws_security_group.secops-cluster.id]
-    subnet_ids         = aws_subnet.secops[*].id
+    security_group_ids = [aws_security_group.eks-cluster.id]
+    subnet_ids         = aws_subnet.eks[*].id
   }
 
   lifecycle {
@@ -20,12 +20,12 @@ resource "aws_eks_cluster" "secops" {
   version = "1.17"
 
   depends_on = [
-    aws_iam_role_policy_attachment.secops-cluster-AmazonEKSClusterPolicy,
-    aws_iam_role_policy_attachment.secops-cluster-AmazonEKSServicePolicy,
+    aws_iam_role_policy_attachment.eks-cluster-AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.eks-cluster-AmazonEKSServicePolicy,
   ]
 }
 
-resource "aws_iam_role" "secops-cluster" {
+resource "aws_iam_role" "eks-cluster" {
   name = "${var.cluster_name}-role"
 
   assume_role_policy = <<POLICY
@@ -44,20 +44,20 @@ resource "aws_iam_role" "secops-cluster" {
 POLICY
 }
 
-resource "aws_iam_role_policy_attachment" "secops-cluster-AmazonEKSClusterPolicy" {
+resource "aws_iam_role_policy_attachment" "eks-cluster-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.secops-cluster.name
+  role       = aws_iam_role.eks-cluster.name
 }
 
-resource "aws_iam_role_policy_attachment" "secops-cluster-AmazonEKSServicePolicy" {
+resource "aws_iam_role_policy_attachment" "eks-cluster-AmazonEKSServicePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = aws_iam_role.secops-cluster.name
+  role       = aws_iam_role.eks-cluster.name
 }
 
-resource "aws_security_group" "secops-cluster" {
-  name        = "terraform-eks-secops-cluster"
+resource "aws_security_group" "eks-cluster" {
+  name        = "terraform-eks-cluster"
   description = "Cluster communication with worker nodes"
-  vpc_id      = aws_vpc.secops.id
+  vpc_id      = aws_vpc.eks.id
 
   egress {
     from_port   = 0
@@ -67,16 +67,16 @@ resource "aws_security_group" "secops-cluster" {
   }
 
   tags = {
-    Name = "terraform-eks-secops"
+    Name = "terraform-eks"
   }
 }
 
-resource "aws_security_group_rule" "secops-cluster-ingress-workstation-https" {
+resource "aws_security_group_rule" "eks-cluster-ingress-workstation-https" {
   cidr_blocks       = var.kubecontrolnets
   description       = "Allow workstation to communicate with the cluster API Server"
   from_port         = 443
   protocol          = "tcp"
-  security_group_id = aws_security_group.secops-cluster.id
+  security_group_id = aws_security_group.eks-cluster.id
   to_port           = 443
   type              = "ingress"
 }
