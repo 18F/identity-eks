@@ -13,21 +13,19 @@ spec:
 
   # Source of the application manifests
   source:
-    repoURL: https://charts.jetstack.io
-    # You should probably also go get the latest crds.  For this version, you can get them with
-    # wget https://github.com/jetstack/cert-manager/releases/download/v0.16.1/cert-manager.crds.yaml
-    targetRevision: 0.16.1
-    chart: cert-manager
-    helm:
-      values: |
-        podAnnotations:
-          linkerd.io/inject: enabled
-        webhook:
-          podAnnotations:
-            linkerd.io/inject: enabled
-        cainjector:
-          podAnnotations:
-            linkerd.io/inject: enabled
+    repoURL: https://github.com/18F/identity-eks.git
+    targetRevision: HEAD
+    path: base/cert-manager
+
+    # kustomize specific config
+    kustomize:
+      # Optional kustomize version. Note: version must be configured in argocd-cm ConfigMap
+      version: default
+      # Optional image name prefix
+      #namePrefix: system-
+      # Optional images passed to "kustomize edit set image".
+      #images:
+      #- logindotgov/pretend-app
 
 
   # Destination cluster and namespace to deploy the application
@@ -38,14 +36,21 @@ spec:
   # Sync policy
   syncPolicy:
     automated:
+      prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
       selfHeal: true # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
     syncOptions:     # Sync options which modifies sync behavior
     - Validate=false # disables resource validation (equivalent to 'kubectl apply --validate=true')
 
   # Ignore differences at the specified json pointers
   ignoreDifferences:
-    - group: apiextensions.k8s.io
-      kind: CustomResourceDefinition
-      jsonPointers:
-        - /status
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  - group: apiextensions.k8s.io
+    kind: CustomResourceDefinition
+    jsonPointers:
+    - /status
+    - /spec/validation/openAPIV3Schema/properties/spec/properties/solver/properties/dns01/properties/webhook/properties/config/x-kubernetes-preserve-unknown-fields
+    - /spec/validation/openAPIV3Schema/properties/spec/properties/acme/properties/solvers/items/properties/dns01/properties/webhook/properties/config/x-kubernetes-preserve-unknown-fields
 
