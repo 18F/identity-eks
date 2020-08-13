@@ -1,5 +1,4 @@
 resources:
 - namespace.yaml
-- istio-base.yaml
-- istio-16.yaml
+- istio.yaml
 
