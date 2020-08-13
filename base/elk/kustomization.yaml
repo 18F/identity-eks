@@ -4,3 +4,6 @@ resources:
 - kibana
 - logstash
 
+commonAnnotations:
+  foo: bar
+
