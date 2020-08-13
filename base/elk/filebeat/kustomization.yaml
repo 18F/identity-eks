@@ -4,5 +4,5 @@ resources:
 
 commonAnnotations:
   #linkerd.io/inject: enabled
-  sidecar.istio.io/inject: true
+  sidecar.istio.io/inject: "true"
 
