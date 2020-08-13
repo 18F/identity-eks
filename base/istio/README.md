@@ -1,12 +1,12 @@
 # istio
 
-This installs the istio operator, as well as the default profile.
+This installs the istio profile.
 
 You then can automatically inject istio by setting
 ```
 metadata:
   labels:
-    environment: production
+    istio-injection: enabled
 ```
 in a namespace to get everything injected in there, or add the
 ```

@@ -7,6 +7,6 @@ patchesStrategicMerge:
 - argocd-cm.yaml
 - argocd-rbac-cm.yaml
 
-commonAnnotations:
-  linkerd.io/inject: enabled
+#commonAnnotations:
+#  linkerd.io/inject: enabled
 

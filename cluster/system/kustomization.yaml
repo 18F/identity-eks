@@ -1,6 +1,7 @@
 resources:
   - cert-manager-ns.yaml
   - cert-manager.yaml
+  - istio.yaml
   - falco.yaml
   - clamav.yaml
   - elk.yaml
