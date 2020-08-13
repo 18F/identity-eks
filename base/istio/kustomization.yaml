@@ -3,5 +3,4 @@ resources:
 - istio.yaml
 - kiali-profile.yaml
 - istio-kiali.yaml
-- istio-mtls.yaml
 
