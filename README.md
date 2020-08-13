@@ -69,6 +69,9 @@ where `clustertype` is the suffix on the cluster dir that you want to apply.
 
 Example:  `./setup.sh devops-test elk`
 
+Once you have run setup.sh, you may need to wait for a minute or so for argocd to get deployed and then run
+`./deploy.sh your-clustername` to make sure that everything is launched.
+
 ## How to make changes to a cluster
 
 There are three kinds of changes:
@@ -113,11 +116,18 @@ XXX
 
 ## Getting Logs
 
-XXX
+You can use kibana with `kubectl port-forward service/kibana-kibana 5601 -n elk`, or you can
+get a small buffer of logs by using `kubectl logs pod/<podname> -n <namespace>`.  You can find
+the pod names with a command like `kubectl get pods -n <namespace>`.
 
 ## Accessing pods
 
-XXX
+If you need to get into a running service, you can find a pod that you like with
+`kubectl get pods -n <namespace>`, and then use
+`kubectl exec -it pod/<podname> -n <namespace> -- /bin/sh` to get into it.
+
+You may need to add a container name after the pod name if you have sidecars going, like
+if you have a service mesh running.
 
 ## Security
 
