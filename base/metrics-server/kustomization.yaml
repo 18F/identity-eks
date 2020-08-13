@@ -1,5 +1,5 @@
 resources:
   - metrics-server.yml
-commonAnnotations:
-  linkerd.io/inject: enabled
+#commonAnnotations:
+#  linkerd.io/inject: enabled
 

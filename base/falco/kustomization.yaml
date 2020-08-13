@@ -1,6 +1,6 @@
 namespace: kube-system
 resources:
   - falco.yml
-commonAnnotations:
-  linkerd.io/inject: enabled
+#commonAnnotations:
+#  linkerd.io/inject: enabled
 

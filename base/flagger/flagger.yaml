@@ -206,7 +206,7 @@ roleRef:
   name: flagger
 subjects:
 - name: flagger
-  namespace: linkerd
+  namespace: istio-system
   kind: ServiceAccount
 ---
 # Source: flagger/templates/deployment.yaml
@@ -263,8 +263,8 @@ spec:
           command:
           - ./flagger
           - -log-level=info
-          - -mesh-provider=linkerd
-          - -metrics-server=http://linkerd-prometheus:9090
+          - -mesh-provider=istio
+          - -metrics-server=http://prometheus:9090
           - -enable-config-tracking=true
           - -slack-user=flagger
           livenessProbe:

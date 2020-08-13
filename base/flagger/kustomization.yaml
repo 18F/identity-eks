@@ -2,6 +2,6 @@ resources:
   - flagger-crd.yaml
   - flagger.yaml
 
-commonAnnotations:
-  linkerd.io/inject: enabled
+#commonAnnotations:
+#  linkerd.io/inject: enabled
 
