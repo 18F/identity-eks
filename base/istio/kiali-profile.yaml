@@ -2,6 +2,7 @@ apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
 metadata:
   namespace: istio-system
+  name: kiali
 spec:
   hub: docker.io/istio
   tag: 1.6.8

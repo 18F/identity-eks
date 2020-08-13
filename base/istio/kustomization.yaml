@@ -2,4 +2,5 @@ resources:
 - namespace.yaml
 - istio.yaml
 - kiali-profile.yaml
+- istio-kiali.yaml
 
