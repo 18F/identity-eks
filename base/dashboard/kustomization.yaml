@@ -4,6 +4,6 @@ resources:
   - dashboard.yaml
   - rolebinding.yaml
 
-commonAnnotations:
-  linkerd.io/inject: enabled
+#commonAnnotations:
+#  linkerd.io/inject: enabled
 
