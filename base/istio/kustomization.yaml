@@ -1,5 +1,5 @@
 resources:
 - namespace.yaml
 - istio.yaml
-- istio-default.yaml
+- kiali-profile.yaml
 
