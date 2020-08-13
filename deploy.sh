@@ -93,9 +93,9 @@ fi
 # it in.  Ideally, we have certmanager do this, and there is some discussion
 # about this here: https://github.com/linkerd/linkerd2/issues/3745 but it is
 # not yet happening.
-pushd "$RUN_BASE/base/linkerd/"
-./install-linkerd.sh
-popd
+#pushd "$RUN_BASE/base/linkerd/"
+#./install-linkerd.sh
+#popd
 
 # apply k8s config for this cluster
 if [ -z "$2" ] ; then
