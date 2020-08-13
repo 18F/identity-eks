@@ -3,7 +3,8 @@ resources:
 - elasticsearch.yml
 
 commonAnnotations:
-  linkerd.io/inject: enabled
-  config.linkerd.io/skip-inbound-ports: "9300"
-  config.linkerd.io/skip-outbound-ports: "9300"
+  #linkerd.io/inject: enabled
+  #config.linkerd.io/skip-inbound-ports: "9300"
+  #config.linkerd.io/skip-outbound-ports: "9300"
+  sidecar.istio.io/inject: true
 
