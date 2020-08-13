@@ -16,3 +16,7 @@ metadata
 ```
 annotation to a deployment to do it on a more individual basis.
 
+## Dashboard
+
+`istioctl dashboard kiali`
+
