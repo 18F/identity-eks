@@ -17,9 +17,9 @@ filebeatConfig:
       #json:
       #- keys_under_root: true
 
-     output.elasticsearch:
-       host: '${NODE_NAME}'
-       hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+    output.elasticsearch:
+      host: '${NODE_NAME}'
+      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
 
     setup.ilm.policy_name: 'expire90days'
 

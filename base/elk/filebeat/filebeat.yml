@@ -40,9 +40,9 @@ data:
       #json:
       #- keys_under_root: true
     
-     output.elasticsearch:
-       host: '${NODE_NAME}'
-       hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+    output.elasticsearch:
+      host: '${NODE_NAME}'
+      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
     
     setup.ilm.policy_name: 'expire90days'
 ---
@@ -108,7 +108,7 @@ spec:
     metadata:
       annotations:
         
-        configChecksum: 6be07057c5e49299b170cb96f95d9bc4b1ee9f6359e3c458705679d9cd20e60
+        configChecksum: c1f0714d49ece48764023a030af5e62c29fcced9bc4668b027f75131c021655
       name: "filebeat-filebeat"
       labels:
         app: "filebeat-filebeat"
