@@ -97,6 +97,13 @@ fi
 #./install-linkerd.sh
 #popd
 
+# install alb ingress controller
+# XXX this has to be here because it needs to be run inline because it needs to know the
+# name of the EKS cluster that it is deployed in.
+pushd "$RUN_BASE/base/alb-ingress-controller/"
+./install-albingress.sh
+popd
+
 # apply k8s config for this cluster
 if [ -z "$2" ] ; then
   kustomize build "$RUN_BASE/cluster" | kubectl apply -f -
