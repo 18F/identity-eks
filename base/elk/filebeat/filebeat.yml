@@ -33,7 +33,7 @@ data:
       - decode_json_fields:
           when:
             regexp:
-              message: "^\{.*\}$"
+              message: "^{.*}$"
           fields: ["message"]
           process_array: false
           max_depth: 2
@@ -109,7 +109,7 @@ spec:
     metadata:
       annotations:
         
-        configChecksum: 580910c3bf09a93bf32d50fedb221a47627171cba64631a438a4bfefd87e429
+        configChecksum: ca17cd9cc5c201c2d91cb43f60f3f354879e5f54a6d434398a6778e7206e8b0
       name: "filebeat-filebeat"
       labels:
         app: "filebeat-filebeat"
