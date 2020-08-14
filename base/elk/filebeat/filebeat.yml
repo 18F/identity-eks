@@ -40,6 +40,10 @@ data:
       #json:
       #- keys_under_root: true
     
+     output.elasticsearch:
+       host: '${NODE_NAME}'
+       hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+    
     setup.ilm.policy_name: 'expire90days'
 ---
 # Source: filebeat/templates/clusterrole.yaml
@@ -104,7 +108,7 @@ spec:
     metadata:
       annotations:
         
-        configChecksum: b392a816a823ab5389a2f4393ece1c107768a3cd5c1659ec439f10440b7ee2c
+        configChecksum: 6be07057c5e49299b170cb96f95d9bc4b1ee9f6359e3c458705679d9cd20e60
       name: "filebeat-filebeat"
       labels:
         app: "filebeat-filebeat"
