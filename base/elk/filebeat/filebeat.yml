@@ -43,7 +43,7 @@ data:
     
     output.elasticsearch:
       host: '${NODE_NAME}'
-      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master-headless:9200}'
     
     setup.ilm.policy_name: 'expire90days'
 ---
@@ -109,7 +109,7 @@ spec:
     metadata:
       annotations:
         
-        configChecksum: 5a01d34aa8d43a39be00a48d30f539d4e4d21a5e8427ea1c65725102de3864b
+        configChecksum: b4d4adf592049c07b604e58969c0298317b77a3f88eb56eaf7ca861958396b6
       name: "filebeat-filebeat"
       labels:
         app: "filebeat-filebeat"

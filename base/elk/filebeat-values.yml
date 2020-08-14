@@ -20,7 +20,7 @@ filebeatConfig:
 
     output.elasticsearch:
       host: '${NODE_NAME}'
-      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master-headless:9200}'
 
     setup.ilm.policy_name: 'expire90days'
 
