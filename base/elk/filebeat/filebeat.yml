@@ -31,14 +31,15 @@ data:
       processors:
       - add_kubernetes_metadata: ~
       - decode_json_fields:
+          when:
+            regexp:
+              message: "^\{.*\}$"
           fields: ["message"]
           process_array: false
           max_depth: 2
           target: "json"
           overwrite_keys: false
           add_error_key: true
-      #json:
-      #- keys_under_root: true
     
     output.elasticsearch:
       host: '${NODE_NAME}'
@@ -108,7 +109,7 @@ spec:
     metadata:
       annotations:
         
-        configChecksum: c1f0714d49ece48764023a030af5e62c29fcced9bc4668b027f75131c021655
+        configChecksum: 580910c3bf09a93bf32d50fedb221a47627171cba64631a438a4bfefd87e429
       name: "filebeat-filebeat"
       labels:
         app: "filebeat-filebeat"
