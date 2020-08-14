@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: https://github.com/timothy-spencer/idp-dev.git
     targetRevision: HEAD
-    path: workloads/idp
+    path: .
 
     # kustomize specific config
     kustomize:
