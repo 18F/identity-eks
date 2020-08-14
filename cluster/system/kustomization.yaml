@@ -7,7 +7,6 @@ resources:
   - falco.yaml
   - clamav.yaml
   - elk.yaml
-  - filebeat.yaml
   - dashboard.yaml
   - metrics-server.yaml
   - flagger.yaml
