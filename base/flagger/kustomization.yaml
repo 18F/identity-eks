@@ -1,6 +1,7 @@
 resources:
   - flagger-crd.yaml
   - flagger.yaml
+  - latencymetric.yaml
 
 #commonAnnotations:
 #  linkerd.io/inject: enabled
