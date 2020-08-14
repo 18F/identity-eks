@@ -86,7 +86,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: filebeat-filebeat
-  namespace: kube-system
+  namespace: elk
 ---
 # Source: filebeat/templates/daemonset.yaml
 apiVersion: apps/v1
@@ -126,7 +126,7 @@ spec:
           name: filebeat-filebeat-config
       - name: data
         hostPath:
-          path: /var/lib/filebeat-filebeat-kube-system-data
+          path: /var/lib/filebeat-filebeat-elk-data
           type: DirectoryOrCreate
       - name: varlibdockercontainers
         hostPath:

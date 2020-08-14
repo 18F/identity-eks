@@ -12,6 +12,7 @@ helm template elasticsearch-logging elastic/elasticsearch -f elasticsearch-value
 helm template kibana elastic/kibana > kibana/kibana.yml
 helm template logstash elastic/logstash -f logstash-values.yml > logstash/logstash.yml
 
-kubectl config set-context --current --namespace=kube-system
-helm template filebeat elastic/filebeat -f filebeat-values.yml --namespace kube-system > filebeat/filebeat.yml
+#kubectl config set-context --current --namespace=kube-system
+#helm template filebeat elastic/filebeat -f filebeat-values.yml --namespace kube-system > filebeat/filebeat.yml
+helm template filebeat elastic/filebeat -f filebeat-values.yml > filebeat/filebeat.yml
 
