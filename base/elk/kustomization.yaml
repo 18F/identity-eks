@@ -4,4 +4,5 @@ resources:
 - kibana
 - logstash
 - filebeat
+- mtls-policy.yaml
 
