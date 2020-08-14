@@ -1,7 +1,5 @@
 resources:
   - argocd.yaml
-  - cert-manager-ns.yaml
-  - cert-manager.yaml
   - istio-operator.yaml
   - istio.yaml
   - falco.yaml
