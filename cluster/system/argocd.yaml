@@ -1,3 +1,5 @@
+# This may seem kinda wacky, but because there is no state kept,
+# you can do this!  See here:  https://argoproj.github.io/argo-cd/operator-manual/declarative-setup/#manage-argo-cd-using-argo-cd
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
