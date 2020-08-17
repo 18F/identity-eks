@@ -1,0 +1,180 @@
+---
+# Source: external-dns/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: external-dns
+  labels: 
+    app.kubernetes.io/name: external-dns
+    helm.sh/chart: external-dns-3.3.0
+    app.kubernetes.io/instance: external-dns
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: external-dns/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: external-dns
+  labels: 
+    app.kubernetes.io/name: external-dns
+    helm.sh/chart: external-dns-3.3.0
+    app.kubernetes.io/instance: external-dns
+    app.kubernetes.io/managed-by: Helm
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - pods
+      - nodes
+      - endpoints
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io"
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - gateways
+      - virtualservices
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - zalando.org
+    resources:
+      - routegroups
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - zalando.org
+    resources:
+      - routegroups/status
+    verbs:
+      - patch
+      - update
+---
+# Source: external-dns/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: external-dns
+  labels: 
+    app.kubernetes.io/name: external-dns
+    helm.sh/chart: external-dns-3.3.0
+    app.kubernetes.io/instance: external-dns
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: external-dns
+subjects:
+  - kind: ServiceAccount
+    name: external-dns
+    namespace: kube-system
+---
+# Source: external-dns/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-dns
+  labels: 
+    app.kubernetes.io/name: external-dns
+    helm.sh/chart: external-dns-3.3.0
+    app.kubernetes.io/instance: external-dns
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ports:
+    - name: http
+      port: 7979
+      protocol: TCP
+      targetPort: http
+  selector: 
+    app.kubernetes.io/name: external-dns
+    app.kubernetes.io/instance: external-dns
+  type: ClusterIP
+---
+# Source: external-dns/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-dns
+  labels: 
+    app.kubernetes.io/name: external-dns
+    helm.sh/chart: external-dns-3.3.0
+    app.kubernetes.io/instance: external-dns
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: external-dns
+      app.kubernetes.io/instance: external-dns
+  template:
+    metadata:
+      labels: 
+        app.kubernetes.io/name: external-dns
+        helm.sh/chart: external-dns-3.3.0
+        app.kubernetes.io/instance: external-dns
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+    spec:      
+      securityContext: 
+        fsGroup: 1001
+        runAsUser: 1001
+      serviceAccountName: external-dns
+      containers:
+        - name: external-dns
+          image: "docker.io/bitnami/external-dns:0.7.3-debian-10-r0"
+          imagePullPolicy: "IfNotPresent"
+          args:
+            # Generic arguments
+            - --log-level=info
+            - --log-format=text
+            - --policy=upsert-only
+            - --provider=aws
+            - --registry=txt
+            - --interval=1m
+            - --source=service
+            - --source=ingress
+            # AWS arguments
+            - --aws-batch-change-size=1000
+          env:
+            # AWS environment variables
+            - name: AWS_DEFAULT_REGION
+              value: us-east-1
+          ports:
+            - name: http
+              containerPort: 7979
+          readinessProbe: 
+            failureThreshold: 6
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          livenessProbe: 
+            failureThreshold: 2
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts:
+      volumes:

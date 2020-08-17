@@ -12,7 +12,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "*"
+    - "secure.eks-test.v2.identitysandbox.gov"
     tls:
       httpsRedirect: true # sends 301 redirect for http requests
   - port:
@@ -20,7 +20,7 @@ spec:
       name: https-443
       protocol: HTTPS
     hosts:
-    - "*"
+    - "secure.eks-test.v2.identitysandbox.gov"
     tls:
       mode: ISTIO_MUTUAL # enables HTTPS on this port with self signed certs
 

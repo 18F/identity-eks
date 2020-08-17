@@ -134,3 +134,8 @@ variable "elasticsearch_volume_size" {
   # allowed values: 300 - 1000
   default = 300
 }
+
+variable "v2_zone_id" {
+  description = "zone ID of the v2.identitysandbox.gov route53 zone"
+  # default = "ZXXXXXXXXXXXXXXX"
+}

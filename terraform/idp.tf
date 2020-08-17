@@ -112,3 +112,12 @@ resource "aws_elasticache_replication_group" "idp" {
   # note that t2.* instances don't support automatic failover
   automatic_failover_enabled = true
 }
+
+# Create a TLS certificate with ACM for the ALB
+module "acm-cert-idp" {
+  source                    = "github.com/18F/identity-terraform//acm_certificate?ref=19a1a7d7a5c3e2177f62d96a553fed53ac2c251c"
+  enabled                   = 1
+  domain_name               = "secure.${var.cluster_name}.v2.identitysandbox.gov"
+  subject_alternative_names = []
+  validation_zone_id        = aws_route53_zone.eks.zone_id
+}

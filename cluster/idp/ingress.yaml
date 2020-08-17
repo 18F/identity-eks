@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: idp-ingress
+  namespace: idp
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/backend-protocol: HTTPS
+spec:
+  rules:
+  - host: eks-idp.devops-test.v2.identitysandbox.gov
+    http:
+      paths:
+      - path: /*
+        backend:    
+          serviceName: idp-gateway
+          servicePort: 443
+
