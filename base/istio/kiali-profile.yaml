@@ -439,7 +439,7 @@ spec:
         applicationPorts: ""
         debug: info
         domain: ""
-        type: LoadBalancer
+        type: NodePort
         name: istio-ingressgateway
         zvpn: {}
         env: {}
