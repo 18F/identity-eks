@@ -61,6 +61,28 @@ spec:
       targetPort: 6379
 REDISSERVICE
 
+  idp_ingress = <<EOF
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: idp-ingress
+  namespace: istio-system
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/certificate-arn: ${module.acm-cert-idp.cert_arn}
+    alb.ingress.kubernetes.io/backend-protocol: HTTPS
+spec:
+  rules:
+  - host: secure.${var.cluster_name}.v2.identitysandbox.gov
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: istio-ingressgateway
+          servicePort: 443
+EOF
+
 }
 
 output "config_map_aws_auth" {
@@ -78,3 +100,8 @@ output "idp_db_configmap" {
 output "idp_redis_service" {
   value = local.idp_redis_service
 }
+
+output "idp_ingress" {
+  value = local.idp_ingress
+}
+
