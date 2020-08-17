@@ -3,6 +3,7 @@ resources:
   - istio-operator.yaml
   - istio.yaml
   - falco.yaml
+  - external-dns.yaml
   - clamav.yaml
   - elk.yaml
   - dashboard.yaml
