@@ -1,3 +1,4 @@
+# This is mostly just copied from https://github.com/istio/istio/blob/master/manifests/profiles/default.yaml
 apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
 metadata:
