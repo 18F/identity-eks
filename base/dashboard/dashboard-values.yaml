@@ -3,6 +3,9 @@ protocolHttp: true
 
 metricsScraper:
   enabled: true
+
 metrics-server:
   enabled: true
 
+rbac:
+  clusterReadOnlyRole: true
