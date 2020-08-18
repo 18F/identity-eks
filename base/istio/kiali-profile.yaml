@@ -51,7 +51,7 @@ spec:
 
     # Policy feature
     policy:
-      enabled: true
+      enabled: false
       k8s:
         hpaSpec:
           maxReplicas: 5
@@ -78,7 +78,7 @@ spec:
 
     # Telemetry feature
     telemetry:
-      enabled: true
+      enabled: false
       k8s:
         env:
           - name: POD_NAMESPACE
@@ -115,7 +115,7 @@ spec:
 
     # Security feature
     citadel:
-      enabled: true
+      enabled: false
       k8s:
         strategy:
           rollingUpdate:
