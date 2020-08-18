@@ -4,6 +4,8 @@ kind: IstioOperator
 metadata:
   namespace: istio-system
   name: kiali
+  labels:
+    app.kubernetes.io/instance: istio
 spec:
   hub: docker.io/istio
   tag: 1.6.8

@@ -1,4 +1,3 @@
 resources:
 - kiali-profile.yaml
-- elk-policy.yaml
 
