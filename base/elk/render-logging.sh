@@ -9,7 +9,7 @@ helm repo update
 kubectl config set-context --current --namespace=elk
 
 helm template elasticsearch-logging elastic/elasticsearch -f elasticsearch-values.yml > elasticsearch/elasticsearch.yml
-helm template kibana elastic/kibana > kibana/kibana.yml
+helm template kibana elastic/kibana -f kibana-values.yaml > kibana/kibana.yml
 helm template logstash elastic/logstash -f logstash-values.yml > logstash/logstash.yml
 
 #kubectl config set-context --current --namespace=kube-system

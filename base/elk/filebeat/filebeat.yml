@@ -7,7 +7,7 @@ metadata:
   annotations:
   labels:
     app: "filebeat-filebeat"
-    chart: "filebeat-7.8.1"
+    chart: "filebeat-7.9.0"
     heritage: "Helm"
     release: "filebeat"
 ---
@@ -18,7 +18,7 @@ metadata:
   name: filebeat-filebeat-config
   labels:
     app: "filebeat-filebeat"
-    chart: "filebeat-7.8.1"
+    chart: "filebeat-7.9.0"
     heritage: "Helm"
     release: "filebeat"
 data:
@@ -54,7 +54,7 @@ metadata:
   name: filebeat-filebeat-cluster-role
   labels:
     app: "filebeat-filebeat"
-    chart: "filebeat-7.8.1"
+    chart: "filebeat-7.9.0"
     heritage: "Helm"
     release: "filebeat"
 rules:
@@ -76,7 +76,7 @@ metadata:
   name: filebeat-filebeat-cluster-role-binding
   labels:
     app: "filebeat-filebeat"
-    chart: "filebeat-7.8.1"
+    chart: "filebeat-7.9.0"
     heritage: "Helm"
     release: "filebeat"
 roleRef:
@@ -95,7 +95,7 @@ metadata:
   name: filebeat-filebeat
   labels:
     app: "filebeat-filebeat"
-    chart: "filebeat-7.8.1"
+    chart: "filebeat-7.9.0"
     heritage: "Helm"
     release: "filebeat"
 spec:
@@ -109,11 +109,11 @@ spec:
     metadata:
       annotations:
         
-        configChecksum: b4d4adf592049c07b604e58969c0298317b77a3f88eb56eaf7ca861958396b6
+        configChecksum: 434081d98fa4bebfb966adeca45d4ccd4adf72eacc3cf043b90091eab1c60d2
       name: "filebeat-filebeat"
       labels:
         app: "filebeat-filebeat"
-        chart: "filebeat-7.8.1"
+        chart: "filebeat-7.9.0"
         heritage: "Helm"
         release: "filebeat"
     spec:
@@ -139,7 +139,7 @@ spec:
           path: /var/run/docker.sock
       containers:
       - name: "filebeat"
-        image: "docker.elastic.co/beats/filebeat:7.8.1"
+        image: "docker.elastic.co/beats/filebeat:7.9.0"
         imagePullPolicy: "IfNotPresent"
         args:
         - "-e"
@@ -202,7 +202,7 @@ spec:
           mountPath: /var/log
           readOnly: true
         # Necessary when using autodiscovery; avoid mounting it otherwise
-        # See: https://www.elastic.co/guide/en/beats/filebeat/7.8/configuration-autodiscover.html
+        # See: https://www.elastic.co/guide/en/beats/filebeat/7.9/configuration-autodiscover.html
         - name: varrundockersock
           mountPath: /var/run/docker.sock
           readOnly: true
