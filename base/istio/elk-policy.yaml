@@ -1,0 +1,21 @@
+apiVersion: authentication.istio.io/v1alpha1
+kind: Policy
+metadata:
+  name: elk-mtls-authn
+spec:
+  targets:
+  - name: elasticsearch-master-headless
+  peers:
+  - mtls:
+      mode: STRICT
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: elk-mtls-dr
+spec:
+  host: elasticsearch-master-headless
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+
