@@ -224,7 +224,7 @@ spec:
           - name: cluster.name
             value: "elasticsearch"
           - name: network.host
-            value: "0.0.0.0"
+            value: "127.0.0.1"
           - name: ES_JAVA_OPTS
             value: "-Xmx1g -Xms1g"
           - name: node.data
@@ -267,7 +267,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "elasticsearch-logging-plgjk-test"
+  name: "elasticsearch-logging-lfeuf-test"
   annotations:
     "helm.sh/hook": test-success
 spec:
@@ -275,7 +275,7 @@ spec:
     fsGroup: 1000
     runAsUser: 1000
   containers:
-  - name: "elasticsearch-logging-clzkf-test"
+  - name: "elasticsearch-logging-yzsgf-test"
     image: "docker.elastic.co/elasticsearch/elasticsearch:7.9.0"
     imagePullPolicy: "IfNotPresent"
     command:

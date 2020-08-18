@@ -1,5 +1,7 @@
 antiAffinity: "soft"
 
+networkHost: 127.0.0.1
+
 resources:
   requests:
     cpu: "100m"
