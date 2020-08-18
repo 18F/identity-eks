@@ -1,16 +1,4 @@
 ---
-# Source: kubernetes-dashboard/charts/metrics-server/templates/metrics-server-serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: dashboard-metrics-server
-  namespace: kubernetes-dashboard
-  labels:
-    app: metrics-server
-    chart: metrics-server-2.11.1
-    release: dashboard
-    heritage: Helm
----
 # Source: kubernetes-dashboard/templates/serviceaccount.yaml
 # Copyright 2017 The Kubernetes Authors.
 #
@@ -118,47 +106,6 @@ metadata:
     app.kubernetes.io/version: "2.0.3"
     app.kubernetes.io/managed-by: Helm
   name: dashboard-kubernetes-dashboard-settings
----
-# Source: kubernetes-dashboard/charts/metrics-server/templates/aggregated-metrics-reader-cluster-role.yaml
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: system:metrics-server-aggregated-reader
-  labels:
-    app: metrics-server
-    chart: metrics-server-2.11.1
-    release: dashboard
-    heritage: Helm
-    rbac.authorization.k8s.io/aggregate-to-view: "true"
-    rbac.authorization.k8s.io/aggregate-to-edit: "true"
-    rbac.authorization.k8s.io/aggregate-to-admin: "true"
-rules:
-  - apiGroups: ["metrics.k8s.io"]
-    resources: ["pods","nodes"]
-    verbs: ["get", "list", "watch"]
----
-# Source: kubernetes-dashboard/charts/metrics-server/templates/cluster-role.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: system:dashboard-metrics-server
-  labels:
-    app: metrics-server
-    chart: metrics-server-2.11.1
-    release: dashboard
-    heritage: Helm
-rules:
-  - apiGroups:
-    - ""
-    resources:
-      - pods
-      - nodes
-      - nodes/stats
-      - namespaces
-    verbs:
-      - get
-      - list
-      - watch
 ---
 # Source: kubernetes-dashboard/templates/clusterrole-metrics.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -341,44 +288,6 @@ rules:
       - list
       - watch
 ---
-# Source: kubernetes-dashboard/charts/metrics-server/templates/auth-delegator-crb.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: dashboard-metrics-server:system:auth-delegator
-  labels:
-    app: metrics-server
-    chart: metrics-server-2.11.1
-    release: dashboard
-    heritage: Helm
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: system:auth-delegator
-subjects:
-  - kind: ServiceAccount
-    name: dashboard-metrics-server
-    namespace: kubernetes-dashboard
----
-# Source: kubernetes-dashboard/charts/metrics-server/templates/metrics-server-crb.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: system:dashboard-metrics-server
-  labels:
-    app: metrics-server
-    chart: metrics-server-2.11.1
-    release: dashboard
-    heritage: Helm
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: system:dashboard-metrics-server
-subjects:
-  - kind: ServiceAccount
-    name: dashboard-metrics-server
-    namespace: kubernetes-dashboard
----
 # Source: kubernetes-dashboard/templates/clusterrolebinding-metrics.yaml
 # Copyright 2017 The Kubernetes Authors.
 #
@@ -493,26 +402,6 @@ rules:
     resourceNames: ["heapster", "http:heapster:", "https:heapster:", "dashboard-metrics-scraper", "http:dashboard-metrics-scraper"]
     verbs: ["get"]
 ---
-# Source: kubernetes-dashboard/charts/metrics-server/templates/role-binding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: dashboard-metrics-server-auth-reader
-  namespace: kube-system
-  labels:
-    app: metrics-server
-    chart: metrics-server-2.11.1
-    release: dashboard
-    heritage: Helm
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: extension-apiserver-authentication-reader
-subjects:
-  - kind: ServiceAccount
-    name: dashboard-metrics-server
-    namespace: kubernetes-dashboard
----
 # Source: kubernetes-dashboard/templates/rolebinding.yaml
 # Copyright 2017 The Kubernetes Authors.
 #
@@ -546,29 +435,6 @@ subjects:
   - kind: ServiceAccount
     name: dashboard-kubernetes-dashboard
     namespace: kubernetes-dashboard
----
-# Source: kubernetes-dashboard/charts/metrics-server/templates/metric-server-service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: dashboard-metrics-server
-  namespace: kubernetes-dashboard
-  labels:
-    app: metrics-server
-    chart: metrics-server-2.11.1
-    release: dashboard
-    heritage: Helm
-  annotations:
-    {}
-spec:
-  ports:
-    - port: 443
-      protocol: TCP
-      targetPort: https
-  selector:
-    app: metrics-server
-    release: dashboard
-  type: ClusterIP
 ---
 # Source: kubernetes-dashboard/templates/service.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -607,78 +473,6 @@ spec:
     app.kubernetes.io/name: kubernetes-dashboard
     app.kubernetes.io/instance: dashboard
     app.kubernetes.io/component: kubernetes-dashboard
----
-# Source: kubernetes-dashboard/charts/metrics-server/templates/metrics-server-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: dashboard-metrics-server
-  namespace: kubernetes-dashboard
-  labels:
-    app: metrics-server
-    chart: metrics-server-2.11.1
-    release: dashboard
-    heritage: Helm
-spec:
-  selector:
-    matchLabels:
-      app: metrics-server
-      release: dashboard
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: metrics-server
-        release: dashboard
-    spec:
-      serviceAccountName: dashboard-metrics-server
-      containers:
-        - name: metrics-server
-          image: "k8s.gcr.io/metrics-server-amd64:v0.3.6"
-          imagePullPolicy: IfNotPresent
-          command:
-            - /metrics-server
-            - --cert-dir=/tmp
-            - --logtostderr
-            - --secure-port=8443
-          ports:
-          - containerPort: 8443
-            name: https
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: https
-              scheme: HTTPS
-            initialDelaySeconds: 20
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: https
-              scheme: HTTPS
-            initialDelaySeconds: 20
-          resources:
-            {}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-              - all
-            readOnlyRootFilesystem: true
-            runAsGroup: 10001
-            runAsNonRoot: true
-            runAsUser: 10001
-          volumeMounts:
-          - name: tmp
-            mountPath: /tmp
-      nodeSelector:
-        {}
-      affinity:
-        {}
-      tolerations:
-        []
-      volumes:
-      - name: tmp
-        emptyDir: {}
 ---
 # Source: kubernetes-dashboard/templates/deployment.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -795,26 +589,6 @@ spec:
       - name: tmp-volume
         emptyDir: {}
 ---
-# Source: kubernetes-dashboard/charts/metrics-server/templates/metrics-api-service.yaml
-apiVersion: apiregistration.k8s.io/v1beta1
-kind: APIService
-metadata:
-  name: v1beta1.metrics.k8s.io
-  labels:
-    app: metrics-server
-    chart: metrics-server-2.11.1
-    release: dashboard
-    heritage: Helm
-spec:
-  service:
-    name: dashboard-metrics-server
-    namespace: kubernetes-dashboard
-  group: metrics.k8s.io
-  version: v1beta1
-  insecureSkipTLSVerify: true
-  groupPriorityMinimum: 100
-  versionPriority: 100
----
 # Source: kubernetes-dashboard/templates/ingress.yaml
 # Copyright 2017 The Kubernetes Authors.
 #
@@ -859,25 +633,3 @@ spec:
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
----
-# Source: kubernetes-dashboard/charts/metrics-server/templates/tests/test-version.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: dashboard-metrics-server-test
-  labels:
-    app: metrics-server
-    chart: metrics-server-2.11.1
-    release: dashboard
-    heritage: Helm
-  annotations:
-    "helm.sh/hook": test-success
-spec:
-  containers:
-  - name: wget
-    image: busybox
-    command: ['/bin/sh']
-    args:
-    - -c
-    - 'wget -qO- https://dashboard-metrics-server:443/version | grep -F v0.3.6'
-  restartPolicy: Never
