@@ -1,9 +1,0 @@
-apiVersion: "security.istio.io/v1beta1"
-kind: "PeerAuthentication"
-metadata:
-  name: "elk-policy"
-  namespace: "elk"
-spec:
-  mtls:
-    mode: STRICT
-
