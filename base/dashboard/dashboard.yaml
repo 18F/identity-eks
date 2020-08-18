@@ -347,6 +347,7 @@ spec:
         imagePullPolicy: IfNotPresent
         args:
           - --namespace=kubernetes-dashboard
+          - --sidecar-host=http://127.0.0.1:8000
         ports:
         - name: http
           containerPort: 9090
@@ -371,6 +372,27 @@ spec:
           requests:
             cpu: 100m
             memory: 200Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 2001
+          runAsUser: 1001
+      - name: dashboard-metrics-scraper
+        image: "kubernetesui/metrics-scraper:v1.0.4"
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8000
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /
+            port: 8000
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true

@@ -1,3 +1,6 @@
 
 protocolHttp: true
 
+metricsScraper:
+  enabled: true
+
