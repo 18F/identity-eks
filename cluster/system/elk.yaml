@@ -50,7 +50,6 @@ spec:
   - group: admissionregistration.k8s.io
     kind: ValidatingWebhookConfiguration
     jsonPointers:
-    #- /webhooks/*/clientConfig/caBundle
     - /webhooks/0/clientConfig/caBundle
     - /webhooks/1/clientConfig/caBundle
     - /webhooks/2/clientConfig/caBundle
@@ -59,4 +58,8 @@ spec:
     - /webhooks/5/clientConfig/caBundle
     - /webhooks/6/clientConfig/caBundle
     - /webhooks/7/clientConfig/caBundle
+  - group: apmservers.apm.k8s.elastic.co
+    kind: CustomResourceDefinition
+    jsonPointers:
+    - /status
 
