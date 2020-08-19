@@ -13,6 +13,7 @@
 # ^C it and restart it individually.
 #
 
+kubectl port-forward service/dashboard-kubernetes-dashboard 8444:443 -n kubernetes-dashboard &
 kubectl port-forward service/prometheus 9090 -n istio-system &
 kubectl port-forward service/grafana 3000 -n istio-system &
 kubectl port-forward service/kibana-kibana 5601 -n elk &

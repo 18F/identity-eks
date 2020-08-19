@@ -32,18 +32,20 @@ data:
   #       - system:masters
 CONFIGMAPAWSAUTH
 
-  idp_db_configmap = <<DBCONFIGMAP
+  idp_configmap = <<CONFIGMAP
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: idp-postgres
+  name: idp-config
   namespace: idp
   labels:
-    name: idp-postgres
+    name: idp-config
 data:
-  hostname: "${aws_db_instance.idp.address}"
-  port: "${aws_db_instance.idp.port}"
-DBCONFIGMAP
+  db_hostname: "${aws_db_instance.idp.address}"
+  db_port: "${aws_db_instance.idp.port}"
+  domain_name: ${var.idp_hostname}
+  mailer_domain_name: ${var.idp_hostname}
+CONFIGMAP
 
   idp_redis_service = <<REDISSERVICE
 apiVersion: v1
@@ -72,6 +74,13 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/certificate-arn: ${module.acm-cert-idp.cert_arn}
     alb.ingress.kubernetes.io/backend-protocol: HTTPS
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTPS
+    # XXX These are here for the future when we enable WAF
+    # alb.ingress.kubernetes.io/waf-acl-id: XXX
+    # alb.ingress.kubernetes.io/wafv2-acl-arn: XXX
+    alb.ingress.kubernetes.io/load-balancer-attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=login-gov.elb-logs.${data.aws_caller_identity.current.account_id}-${var.region},access_logs.s3.prefix=${var.cluster_name}/idp
+    # limit to just tspencer and GSA for now
+    alb.ingress.kubernetes.io/inbound-cidrs: 98.146.223.15/32, 159.142.0.0/16
 spec:
   rules:
   - host: secure.${var.cluster_name}.v2.identitysandbox.gov
@@ -81,6 +90,26 @@ spec:
         backend:
           serviceName: istio-ingressgateway
           servicePort: 443
+EOF
+
+  idp_gateway = <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: idp-gateway
+  namespace: idp
+spec:
+  selector:
+    app: idp
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - ${var.idp_hostname}
+    tls:
+      mode: ISTIO_MUTUAL # enables HTTPS on this port with self signed certs
 EOF
 
 }
@@ -93,8 +122,8 @@ output "cluster_arn" {
   value = aws_eks_cluster.eks.arn
 }
 
-output "idp_db_configmap" {
-  value = local.idp_db_configmap
+output "idp_configmap" {
+  value = local.idp_configmap
 }
 
 output "idp_redis_service" {
@@ -103,5 +132,9 @@ output "idp_redis_service" {
 
 output "idp_ingress" {
   value = local.idp_ingress
+}
+
+output "idp_gateway" {
+  value = local.idp_gateway
 }
 

@@ -2,4 +2,5 @@ resources:
   - namespace.yaml
   - project.yaml
   - application.yaml
-  - gateway.yaml
+  # more config (gateway, ingress, configmap, etc) is done in terraform/outputs.tf
+

@@ -142,7 +142,7 @@ XXX
 * get ACM or LE issuing certs
 * figure out secrets strategy (use k8s secrets with kms backend?  vault?  s3 bucket?)
 * get outbound filtering going (https://monzo.com/blog/controlling-outbound-traffic-from-kubernetes https://github.com/monzo/egress-operator)
-* get ALB ingress controller working instead of ELB?
+* DONE: get ALB ingress controller working instead of ELB?
 * figure out how to get idp using SSL (use alb ingress controller with a cert and back end ssl annotation, make istio ingress, done)
 * get pivcac going (could we make this be on all hosts?)
 * try to bug people into making config for the idp less crazy

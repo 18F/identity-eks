@@ -2,7 +2,3 @@
 resources:
 - filebeat.yml
 
-commonAnnotations:
-  #linkerd.io/inject: enabled
-  sidecar.istio.io/inject: "true"
-

@@ -2,7 +2,3 @@ namespace: elk
 resources:
 - logstash.yml
 
-commonAnnotations:
-  #linkerd.io/inject: enabled
-  sidecar.istio.io/inject: "true"
-

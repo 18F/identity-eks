@@ -139,3 +139,9 @@ variable "v2_zone_id" {
   description = "zone ID of the v2.identitysandbox.gov route53 zone"
   # default = "ZXXXXXXXXXXXXXXX"
 }
+
+variable "idp_hostname" {
+  description = "hostname of the ingress/alb used to access the idp"
+  # default = "secure.clustername.identitysandbox.gov"
+}
+
