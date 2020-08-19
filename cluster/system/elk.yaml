@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: https://github.com/18F/identity-eks.git
     targetRevision: HEAD
-    path: base/elk
+    path: base/elk-eck
 
     # kustomize specific config
     kustomize:
@@ -31,7 +31,7 @@ spec:
   # Destination cluster and namespace to deploy the application
   destination:
     server: https://kubernetes.default.svc
-    namespace: elk
+    namespace: elastic-system
 
   # Sync policy
   syncPolicy:
