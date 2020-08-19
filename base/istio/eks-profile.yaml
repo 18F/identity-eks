@@ -77,37 +77,11 @@ spec:
       disablePolicyChecks: true
       proxy:
         accessLogFile: /dev/stdout
+        accessLogFormat: JSON
         resources:
           requests:
             cpu: 10m
             memory: 40Mi
-
-    pilot:
-      autoscaleEnabled: false
-
-    mixer:
-      adapters:
-        useAdapterCRDs: false
-        kubernetesenv:
-          enabled: true
-        prometheus:
-          enabled: true
-          metricsExpiryDuration: 10m
-        stackdriver:
-          enabled: false
-        stdio:
-          enabled: true
-          outputAsJson: false
-      policy:
-        autoscaleEnabled: false
-      telemetry:
-        autoscaleEnabled: false
-
-    gateways:
-      istio-egressgateway:
-        autoscaleEnabled: false
-      istio-ingressgateway:
-        autoscaleEnabled: false
 
     grafana:
       enabled: true
