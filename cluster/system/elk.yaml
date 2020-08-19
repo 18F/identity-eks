@@ -49,5 +49,5 @@ spec:
     - /spec/replicas
   - kind: ValidatingWebhookConfiguration
     jsonPointers:
-    - /webhooks/clientConfig/caBundle
+    - /webhooks/*/clientConfig/caBundle
 
