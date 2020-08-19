@@ -47,3 +47,7 @@ spec:
     kind: Deployment
     jsonPointers:
     - /spec/replicas
+  - kind: ValidatingWebhookConfiguration
+    jsonPointers:
+    - /webhooks/clientConfig/caBundle
+
