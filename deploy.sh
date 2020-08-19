@@ -106,6 +106,9 @@ pushd "$RUN_BASE/base/alb-ingress-controller/"
 ./install-albingress.sh
 popd
 
+# bootstrap argocd
+kustomize build "$RUN_BASE/base/argocd" | kubectl apply -f -
+
 # apply k8s config for this cluster
 if [ -z "$2" ] ; then
   kustomize build "$RUN_BASE/cluster" | kubectl apply -f -
