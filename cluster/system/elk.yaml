@@ -58,8 +58,4 @@ spec:
     - /webhooks/5/clientConfig/caBundle
     - /webhooks/6/clientConfig/caBundle
     - /webhooks/7/clientConfig/caBundle
-  - group: apmservers.apm.k8s.elastic.co
-    kind: CustomResourceDefinition
-    jsonPointers:
-    - /status
 

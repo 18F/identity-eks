@@ -8,6 +8,12 @@ metadata:
 data:
   kustomize.version.default: /usr/local/bin/kustomize
   users.anonymous.enabled: "true"
+  resource.compareoptions: |
+    # disables status field diffing in specified resource types
+    # 'crd' - CustomResourceDefinition-s (default)
+    # 'all' - all resources
+    # 'none' - disabled
+    ignoreResourceStatusField: crd
   # Taken from https://nemo83.dev/posts/argocd-istio-operator-bootstrap/
   resource.customizations: |
     admissionregistration.k8s.io/MutatingWebhookConfiguration:
