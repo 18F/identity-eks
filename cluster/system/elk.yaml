@@ -47,9 +47,10 @@ spec:
     kind: Deployment
     jsonPointers:
     - /spec/replicas
-  - kind: ValidatingWebhookConfiguration
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
     jsonPointers:
-    - /webhooks/*/clientConfig/caBundle
+    #- /webhooks/*/clientConfig/caBundle
     - /webhooks/0/clientConfig/caBundle
     - /webhooks/1/clientConfig/caBundle
     - /webhooks/2/clientConfig/caBundle
