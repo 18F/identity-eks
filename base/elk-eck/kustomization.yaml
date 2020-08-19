@@ -2,4 +2,5 @@ resources:
 - eck.yaml
 - es.yaml
 - kibana.yaml
+- filebeat.yaml
 
