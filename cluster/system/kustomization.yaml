@@ -9,4 +9,5 @@ resources:
   - dashboard.yaml
   - metrics-server.yaml
   - flagger.yaml
+  - spot-termination.yaml
 
