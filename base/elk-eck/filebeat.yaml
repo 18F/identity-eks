@@ -7,8 +7,6 @@ spec:
   version: 7.9.0
   elasticsearchRef:
     name: logging
-  kibanaRef:
-    name: kibana
   config:
     filebeat:
       autodiscover:
