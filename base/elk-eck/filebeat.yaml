@@ -8,31 +8,24 @@ spec:
   elasticsearchRef:
     name: logging
   config:
-    filebeat:
-      autodiscover:
-        providers:
-        - type: kubernetes
-          host: ${HOSTNAME}
-          hints:
-            enabled: true
-            default_config:
-              type: container
-              paths:
-              - /var/log/containers/*${data.kubernetes.container.id}.log
-    processors:
-    - add_cloud_metadata: {}
-    - add_host_metadata: {}
-    - add_kubernetes_metadata: {}
-    - decode_json_fields:
-        when:
-          regexp:
-            message: "^{.*}$"
-        fields: ["message"]
-        process_array: false
-        max_depth: 2
-        target: "json"
-        overwrite_keys: false
-        add_error_key: true
+    filebeat.inputs:
+    - type: container
+      paths:
+      - /var/log/containers/*.log
+      processors:
+      - add_cloud_metadata: {}
+      - add_host_metadata: {}
+      - add_kubernetes_metadata: {}
+      - decode_json_fields:
+          when:
+            regexp:
+              message: "^{.*}$"
+          fields: ["message"]
+          process_array: false
+          max_depth: 2
+          target: "json"
+          overwrite_keys: false
+          add_error_key: true
   daemonSet:
     podTemplate:
       spec:
