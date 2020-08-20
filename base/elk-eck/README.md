@@ -12,9 +12,13 @@ in there and rendering it and then checking it in and seeing it get deployed,
 but there is an Upgrading section in the second link that probably has
 more details.
 
+The other files are pure configuration files, somewhat based off of some of the
+examples in https://www.elastic.co/guide/en/cloud-on-k8s/current/index.html.
+
 ## Upgrading elasticstack with ECK
 
-XXX
+XXX Looks like it should be as simple as changing /spec/version in all of the
+yaml files and checking them in.
 
 ## Using kibana
 

@@ -76,9 +76,8 @@ Once you have run setup.sh, you may need to wait for a minute or so for argocd t
 
 ## How to make changes to a cluster
 
-There are three kinds of changes:
+There are two kinds of changes:
 * Changes to AWS/EKS setup/resources.
-* Changes to what applications you want deployed into a cluster.
 * Changes to the applications that are deployed in the cluster.
 
 ### AWS changes
@@ -95,26 +94,47 @@ other outputs.  Then run `./deploy.sh your-clustername` to make it actually appl
 
 ### Cluster Applications
 
-When `./deploy.sh your-clustername` is run, it will essentially run `kustomize build cluster | kubectl apply -f -`.
+When `./deploy.sh your-clustername` is run, it will make sure that argocd is running, and then
+it will point it at the `cluster` or `cluster-<clustertype>` directory.
+
 This means that you can use the powers of kustomize to configure all the things that get deployed
 to the cluster.  So you can add plain old yaml manifests there if you like, but it is probably better if
 you use argocd application manifests, because then you can just make changes to git, and argo will automatically
 sync what is in git into the cluster, instead of you having to manually run the deploy script.
+This is the ["app of apps"](https://argoproj.github.io/argo-cd/operator-manual/declarative-setup/#app-of-apps)
+ model that lets you use waves to specify an order to deploy stuff and probably put some tests in
+there too, though I've not used that aspect yet.
 
 You can use helm in the application manifests too, but then you lose the ability to see what exactly is
 being deployed.  I think it's better to use application manifests that point at git repos which contain
 yaml that you want deployed, whether that yaml comes from `helm template` or is written by you.
 This is what _declarative_ really means.
 
-### Application changes
-
 If you have changes to the applications pointed to by the argo manifests, you can just make
 changes and check them in to git.  Once your changes are seen, argo will automatically deploy
 your changes.
 
-## Management of multiple clusters
+# Workflow
 
 XXX
+
+* local development
+* check code into dev branch:  CI runs
+  * artifact is built
+  * artifact is tested
+  * artifact is scanned for security
+  * artifact is promoted to the dev environment by CI checking the new tag into git
+* The app will roll out into the dev environment, be tested, do migrations, etc.
+* When developers are happy with this setup, they can PR their changes into master.
+* When the PR has been approved and merged in, the app will do migrations, be
+  tested, slowly rolled out, etc to the int and prod environments.
+
+If you want to do more load testing or try something else out, just create a branch from prod
+or dev or whatever and use kustomize's patch facility in the cluster dir of that branch to tell
+argocd to pull from that branch instead of master, then run `./deploy.sh clustername`, do
+your tests, then shut down the cluster once you are done to minimize cost.
+
+# Operational tasks
 
 ## Getting Logs
 
@@ -131,7 +151,7 @@ If you need to get into a running service, you can find a pod that you like with
 You may need to add a container name after the pod name if you have sidecars going, like
 if you have a service mesh running.
 
-## Security
+# Security
 
 XXX
 
@@ -139,11 +159,11 @@ XXX
 * figure out how to make database optional, so that we can deploy the `cluster-elk` type of cluster without a db.
 * get email (SES) working
 * get assets/external hostnames working (s3/cloudfront? short term might be to pass in lb name somehow and use that)
-* get ACM or LE issuing certs
+* DONE: get ACM or LE issuing certs
 * figure out secrets strategy (use k8s secrets with kms backend?  vault?  s3 bucket?)
 * get outbound filtering going (https://monzo.com/blog/controlling-outbound-traffic-from-kubernetes https://github.com/monzo/egress-operator)
 * DONE: get ALB ingress controller working instead of ELB?
-* figure out how to get idp using SSL (use alb ingress controller with a cert and back end ssl annotation, make istio ingress, done)
+* DONE: (use istio) figure out how to get idp using SSL (use alb ingress controller with a cert and back end ssl annotation, make istio ingress, done)
 * get pivcac going (could we make this be on all hosts?)
 * try to bug people into making config for the idp less crazy
 * DONE:  get dashboard going so we can see how the cluster is doing with memory/CPU
@@ -156,7 +176,7 @@ XXX
 * really look at the somewhat baroque terraform state stuff that was basically lifted from identity-devops and see if we can make it less ugly
 * set up a "hub" cluster that manages the permanent clusters (basically, just set up IAM role and run deploy.sh)
 * make sure we have a good node/cluster update strategy:  https://docs.aws.amazon.com/cli/latest/reference/eks/update-nodegroup-version.html and the cluster version in the tf code
-* Figure out how to buff up CI pipeline so that it does container scanning and does builds/tests when the base images are updated
+* Figure out how to buff up CI pipeline so that it does container scanning and does builds/tests when the base images are updated, promote images to dev env automatically.
 * Figure out how to get kms correlation engine going:  send kms logs into cloudwatch?  Rework engine to slurp from ELK?
 * make sure WAF is going on our services
 * clean up clamav logging (no noise)
