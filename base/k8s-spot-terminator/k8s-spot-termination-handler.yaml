@@ -1,0 +1,134 @@
+---
+# Source: k8s-spot-termination-handler/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: eks-k8s-spot-termination-handler
+  namespace: "kube-system"
+  labels:
+    app.kubernetes.io/name: k8s-spot-termination-handler
+    helm.sh/chart: k8s-spot-termination-handler-1.4.9
+    app.kubernetes.io/instance: eks
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: k8s-spot-termination-handler/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: eks-k8s-spot-termination-handler
+  labels:
+    app.kubernetes.io/name: k8s-spot-termination-handler
+    helm.sh/chart: k8s-spot-termination-handler-1.4.9
+    app.kubernetes.io/instance: eks
+    app.kubernetes.io/managed-by: Helm
+rules:
+  # For draining nodes
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - extensions
+    resources:
+      - replicasets
+      - daemonsets
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods/eviction
+    verbs:
+      - create
+---
+# Source: k8s-spot-termination-handler/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: eks-k8s-spot-termination-handler
+  labels:
+    app.kubernetes.io/name: k8s-spot-termination-handler
+    helm.sh/chart: k8s-spot-termination-handler-1.4.9
+    app.kubernetes.io/instance: eks
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: eks-k8s-spot-termination-handler
+subjects:
+- kind: ServiceAccount
+  name: eks-k8s-spot-termination-handler
+  namespace: "kube-system"
+---
+# Source: k8s-spot-termination-handler/templates/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: eks-k8s-spot-termination-handler
+  namespace: "kube-system"
+  labels:
+    app.kubernetes.io/name: k8s-spot-termination-handler
+    helm.sh/chart: k8s-spot-termination-handler-1.4.9
+    app.kubernetes.io/instance: eks
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: k8s-spot-termination-handler
+      app.kubernetes.io/instance:  eks
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: k8s-spot-termination-handler
+        app.kubernetes.io/instance: eks
+    spec:
+      hostNetwork: true
+      serviceAccountName: eks-k8s-spot-termination-handler
+      containers:
+        - name: k8s-spot-termination-handler
+          image: "kubeaws/kube-spot-termination-notice-handler:1.13.7-1"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NOTICE_URL
+              value: "http://169.254.169.254/latest/meta-data/spot/termination-time"
+            - name: LOGSPOUT
+              value: "ignore"
+            - name: GRACE_PERIOD
+              value: "120"
+            - name: POLL_INTERVAL
+              value: "5"
+            - name: CLUSTER
+              value: 
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources:
+            {}

@@ -137,4 +137,3 @@ output "idp_ingress" {
 output "idp_gateway" {
   value = local.idp_gateway
 }
-

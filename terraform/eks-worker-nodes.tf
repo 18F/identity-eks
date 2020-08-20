@@ -18,6 +18,11 @@ resource "aws_eks_node_group" "eks" {
 
   disk_size = 120
 
+  tags = {
+    "k8s.io/cluster-autoscaler/enabled"             = true,
+    "k8s.io/cluster-autoscaler/${var.cluster_name}" = true
+  }
+
   depends_on = [
     aws_iam_role_policy_attachment.eks-node-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.eks-node-AmazonEKS_CNI_Policy,
@@ -90,6 +95,48 @@ resource "aws_iam_role_policy" "ebs_csi_driver" {
         "ec2:DetachVolume"
       ],
       "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "cluster_autoscaler" {
+  name = "${var.cluster_name}_cluster_autoscaler"
+  role = aws_iam_role.eks-node.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "autoscaling:DescribeAutoScalingGroups",
+        "autoscaling:DescribeAutoScalingInstances",
+        "autoscaling:DescribeLaunchConfigurations",
+        "autoscaling:DescribeTags",
+        "autoscaling:SetDesiredCapacity",
+        "ec2:DescribeLaunchTemplateVersions"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "autoscaling:SetDesiredCapacity",
+        "autoscaling:TerminateInstanceInAutoScalingGroup",
+        "autoscaling:UpdateAutoScalingGroup"
+      ],
+      "Resource": [
+        ${join(",", formatlist("\"arn:aws:autoscaling:${var.region}:${data.aws_caller_identity.current.account_id}:autoScalingGroup::autoScalingGroupName/%s\"", flatten(aws_eks_node_group.eks.resources[*].autoscaling_groups[*].name)))}
+      ],
+      "Condition": {
+        "StringEquals": {
+          "autoscaling:ResourceTag/k8s.io/cluster-autoscaler/enabled": "true",
+          "autoscaling:ResourceTag/kubernetes.io/cluster/${var.cluster_name}": "owned"
+        }
+      }
     }
   ]
 }
