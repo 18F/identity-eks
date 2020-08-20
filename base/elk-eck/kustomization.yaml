@@ -3,4 +3,5 @@ resources:
 - es.yaml
 - kibana.yaml
 - filebeat.yaml
+- metricbeat.yaml
 
