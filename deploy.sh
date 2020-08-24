@@ -73,8 +73,6 @@ terraform output config_map_aws_auth | kubectl apply -f -
 kubectl create namespace idp && true
 terraform output idp_redis_service | kubectl apply -f - -n idp
 terraform output idp_configmap | kubectl apply -f - -n idp
-terraform output idp_gateway | kubectl apply -f - -n idp
-terraform output idp_ingress | kubectl apply -f - -n istio-system
 popd
 
 # this turns on the EBS persistent volume stuff and make it the default
@@ -103,10 +101,10 @@ fi
 # XXX this has to be here because it needs to be run inline because it needs to know the
 # name of the EKS cluster that it is deployed in.
 pushd "$RUN_BASE/base/alb-ingress-controller/"
-./install-albingress.sh "$TF_VAR_cluster_name"
+./install-albingress.sh "$TF_VAR_cluster_name" || true
 popd
 # XXX same with the cluster autoscaler
-$RUN_BASE/base/cluster-autoscaler/install-clusterautoscaler.sh "$TF_VAR_cluster_name"
+$RUN_BASE/base/cluster-autoscaler/install-clusterautoscaler.sh "$TF_VAR_cluster_name" || true
 
 
 # bootstrap argocd
@@ -118,3 +116,10 @@ if [ -z "$2" ] ; then
 else
   kustomize build "$RUN_BASE/cluster-$2" | kubectl apply -f -
 fi
+
+pushd "$SCRIPT_BASE/terraform"
+sleep 5
+terraform output idp_ingress | kubectl apply -f - -n istio-system
+sleep 5
+terraform output idp_gateway | kubectl apply -f - -n idp
+popd

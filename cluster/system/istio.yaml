@@ -33,7 +33,7 @@ spec:
   # Destination cluster and namespace to deploy the application
   destination:
     server: https://kubernetes.default.svc
-    namespace: istio-system
+    namespace: istio-operator
 
   # Sync policy
   syncPolicy:

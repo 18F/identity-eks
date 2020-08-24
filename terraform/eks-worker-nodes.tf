@@ -71,7 +71,7 @@ resource "aws_iam_role_policy_attachment" "eks-node-AmazonEC2ContainerRegistryRe
 }
 
 resource "aws_iam_role_policy" "ebs_csi_driver" {
-  name = "ebs_csi_driver"
+  name = "${var.cluster_name}_ebs_csi_driver"
   role = aws_iam_role.eks-node.id
 
   policy = <<EOF

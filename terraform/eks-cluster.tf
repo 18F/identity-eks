@@ -55,8 +55,8 @@ resource "aws_iam_role_policy_attachment" "eks-cluster-AmazonEKSServicePolicy" {
 }
 
 resource "aws_security_group" "eks-cluster" {
-  name        = "terraform-eks-cluster"
-  description = "Cluster communication with worker nodes"
+  name        = "${var.cluster_name}-eks-cluster"
+  description = "Cluster communication with worker nodes for ${var.cluster_name}"
   vpc_id      = aws_vpc.eks.id
 
   egress {

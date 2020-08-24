@@ -1,7 +1,7 @@
 namespace: argocd
 resources:
-- namespace.yaml
 - argocd.yaml
+- namespace.yaml
 
 patchesStrategicMerge:
 - argocd-cm.yaml
