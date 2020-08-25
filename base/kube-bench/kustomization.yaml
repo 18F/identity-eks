@@ -1,0 +1,18 @@
+resources:
+  - kube-bench/job-eks.yaml
+
+images:
+- name: <ID.dkr.ecr.region.amazonaws.com/aquasec/kube-bench:ref>
+  newName: aquasec/kube-bench
+  newTag: latest
+
+
+#        - name: kube-bench
+#          # Push the image to your ECR and then refer to it here
+#          image: <ID.dkr.ecr.region.amazonaws.com/aquasec/kube-bench:ref>
+#
+#      containers:
+#        - name: kube-bench
+#          # Push the image to your ECR and then refer to it here
+#          image: aquasec/kube-bench:latest
+

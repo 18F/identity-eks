@@ -1,13 +1,16 @@
 #!/bin/sh
 
-git clone https://github.com/aquasecurity/kube-bench.git
-cd kube-bench
-kubectl apply -f job.yaml
-until [ ! -z "$POD" ] ; do
-	POD=$(kubectl get pods | grep -E '^kube-bench.*Running' | awk '{print $1}')
-done
-kubectl logs -f "$POD"
+rm -rf kube-bench
+git clone --quiet --depth 1 https://github.com/aquasecurity/kube-bench.git
+kustomize build . | kubectl apply -f -
 
-cd ..
+until [ ! -z "$JOB" ] ; do
+	JOB=$(kubectl get job kube-bench | grep -E '^kube-bench.*1\/1')
+	sleep 1
+done
+
+kubectl logs -f job.batch/kube-bench
+
+kubectl delete job.batch/kube-bench
 rm -rf kube-bench
 
