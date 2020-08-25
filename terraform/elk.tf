@@ -26,7 +26,7 @@ resource "aws_elasticsearch_domain" "es" {
   }
   
   vpc_options {
-    security_group_ids = [aws_security_group.eks-cluster.id]
+    security_group_ids = [aws_security_group.elk.id]
     subnet_ids         = tolist(aws_subnet.eks[*].id)
   }
 
@@ -41,7 +41,7 @@ resource "aws_elasticsearch_domain" "es" {
 #     "Statement": [
 #         {
 #             "Action": "es:*",
-#             "Principal": "*",
+#             "Principal": "arn:aws:sts::${data.aws_caller_identity.current.account_id}:assumed-role/FullAdministrator/*",
 #             "Effect": "Allow",
 #             "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.cluster_name}/*"
 #         }
@@ -72,4 +72,34 @@ resource "aws_iam_role_policy" "elk" {
   ]
 }
 EOF
+}
+
+resource "aws_security_group" "elk" {
+  description = "Allow elasticsearch/kibana access"
+
+  egress = []
+
+  ingress {
+    description = "allow users in to kibana"
+    from_port   = 443
+    to_port   = 443
+    protocol  = "tcp"
+    cidr_blocks = var.kubecontrolnets
+  }
+
+  ingress {
+    description = "allow cluster to connect to elasticsearch"
+    from_port = 9200
+    to_port = 9200
+    protocol = "tcp"
+    security_groups = [aws_security_group.eks-cluster.id]
+  }
+
+  name = "${var.cluster_name}-elk"
+
+  tags = {
+    Name = "${var.cluster_name}-elk_security_group"
+  }
+
+  vpc_id = aws_vpc.eks.id
 }

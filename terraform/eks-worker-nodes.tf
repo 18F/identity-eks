@@ -11,7 +11,7 @@ resource "aws_eks_node_group" "eks" {
   instance_types  = ["t3a.large"]
 
   scaling_config {
-    desired_size = 7
+    desired_size = 3
     max_size     = 14
     min_size     = 2
   }

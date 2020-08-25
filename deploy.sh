@@ -112,9 +112,11 @@ kustomize build "$RUN_BASE/base/argocd" | kubectl apply -f -
 
 # apply k8s config for this cluster
 if [ -z "$2" ] ; then
-  kustomize build "$RUN_BASE/cluster" | kubectl apply -f -
+  kubectl apply -f "$RUN_BASE/cluster/cluster.yaml"
+  #kustomize build "$RUN_BASE/cluster" | kubectl apply -f -
 else
-  kustomize build "$RUN_BASE/cluster-$2" | kubectl apply -f -
+  kubectl apply -f "$RUN_BASE/cluster-$2/cluster.yaml"
+  #kustomize build "$RUN_BASE/cluster-$2" | kubectl apply -f -
 fi
 
 pushd "$SCRIPT_BASE/terraform"

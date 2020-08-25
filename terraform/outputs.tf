@@ -107,7 +107,7 @@ spec:
       name: https
       protocol: HTTPS
     hosts:
-    - ${var.idp_hostname}
+    - "*"
     tls:
       mode: ISTIO_MUTUAL # enables HTTPS on this port with self signed certs
 EOF
