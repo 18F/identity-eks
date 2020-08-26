@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shell
+spec:
+  containers:
+  - name: shell
+    image: alpine:latest
+    command: ["sleep", "86400"]
+  hostNetwork: true
+  dnsPolicy: Default
+

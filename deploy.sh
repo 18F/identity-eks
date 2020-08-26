@@ -73,6 +73,9 @@ terraform output config_map_aws_auth | kubectl apply -f -
 kubectl create namespace idp && true
 terraform output idp_redis_service | kubectl apply -f - -n idp
 terraform output idp_configmap | kubectl apply -f - -n idp
+kubectl create namespace elk && true
+terraform output logstash_config | kubectl apply -f - -n elk
+
 popd
 
 # this turns on the EBS persistent volume stuff and make it the default

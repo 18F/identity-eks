@@ -25,53 +25,64 @@ resource "aws_elasticsearch_domain" "es" {
     volume_size = 90
   }
   
-  vpc_options {
-    security_group_ids = [aws_security_group.elk.id]
-    subnet_ids         = tolist(aws_subnet.eks[*].id)
-  }
+  # XXX If you enable these, it will be in the VPC, but inaccessible without struggle
+  # vpc_options {
+  #   security_group_ids = [aws_security_group.elk.id]
+  #   subnet_ids         = tolist(aws_subnet.eks[*].id)
+  # }
 
   domain_endpoint_options {
     enforce_https = true
     tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
   }
 
+  access_policies = <<CONFIG
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "es:ESHttp*",
+      "Condition": {
+        "IpAddress": {
+          "aws:SourceIp": [ ${join(", ", formatlist("\"%s\"", var.kubecontrolnets))} ]
+        }
+      },
+      "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.cluster_name}/*"
+    }
+  ]
+}
+CONFIG
+
 #   access_policies = <<CONFIG
 # {
-#     "Version": "2012-10-17",
-#     "Statement": [
-#         {
-#             "Action": "es:*",
-#             "Principal": "arn:aws:sts::${data.aws_caller_identity.current.account_id}:assumed-role/FullAdministrator/*",
-#             "Effect": "Allow",
-#             "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.cluster_name}/*"
+#   "Version": "2012-10-17",
+#   "Statement": [
+#     {
+#       "Action": "es:ESHttp*",
+#       "Principal": "${aws_eks_node_group.eks.arn}",
+#       "Effect": "Allow",
+#       "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.cluster_name}/*"
+#     },
+#     {
+#       "Effect": "Allow",
+#       "Principal": "*",
+#       "Action": "es:ESHttp*",
+#       "Condition": {
+#         "IpAddress": {
+#           "aws:SourceIp": [ ${join(", ", formatlist("\"%s\"", var.kubecontrolnets))} ]
 #         }
-#     ]
+#       },
+#       "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.cluster_name}/*"
+#     }
+#   ]
 # }
 # CONFIG
 
   tags = {
     Domain = var.cluster_name
   }
-}
-
-resource "aws_iam_role_policy" "elk" {
-  name = "${var.cluster_name}_elk"
-  role = aws_iam_role.eks-node.id
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "es:ESHttp*"
-      ],
-      "Effect": "Allow",
-      "Resource": "${aws_elasticsearch_domain.es.arn}"
-    }
-  ]
-}
-EOF
 }
 
 resource "aws_security_group" "elk" {
