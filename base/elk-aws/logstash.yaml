@@ -33,7 +33,6 @@ spec:
           mountPath: /usr/share/logstash/config
         - name: logstash-pipeline-volume
           mountPath: /usr/share/logstash/pipeline
-      restartPolicy: OnFailure
       volumes:
       - name: config-volume
         configMap:
