@@ -133,7 +133,7 @@ data:
     }
     output {
       amazon_es {
-        index => "logstash-%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+        index => "logstash-%\{[@metadata][beat]\}-%\{+YYYY.MM.dd\}"
         hosts => [ "${aws_elasticsearch_domain.es.endpoint}" ]
       }
     }
