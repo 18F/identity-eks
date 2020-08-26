@@ -13,7 +13,7 @@ spec:
       autodiscover:
         providers:
           - type: kubernetes
-            node: ${NODE_NAME}
+            host: ${HOSTNAME}
             hints:
               enabled: true
               default_config:
