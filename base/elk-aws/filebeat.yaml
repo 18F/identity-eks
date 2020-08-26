@@ -17,13 +17,13 @@ spec:
       autodiscover:
         providers:
           - type: kubernetes
-            node: ${HOSTNAME}
+            node: ${NODE_NAME}
             hints:
               enabled: true
               default_config:
                 type: container
                 paths:
-                  - /var/log/containers/*${data.kubernetes.container.id}.log
+                  - /var/log/containers/*-${data.kubernetes.container.id}.log
     processors:
       - add_cloud_metadata: {}
       - add_host_metadata: {}
