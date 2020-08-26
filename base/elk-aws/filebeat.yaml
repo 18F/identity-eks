@@ -39,7 +39,7 @@ spec:
       spec:
         serviceAccount: elastic-beat-filebeat
         automountServiceAccountToken: true
-        dnsPolicy: ClusterFirstWithHostNet
+        dnsPolicy: ClusterFirst
         hostNetwork: false
         securityContext:
           runAsUser: 0
