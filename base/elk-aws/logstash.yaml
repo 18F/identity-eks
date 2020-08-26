@@ -20,7 +20,9 @@ spec:
         name: logstash
         ports:
         - containerPort: 25826
+          name: http-25826
         - containerPort: 5044
+          name: http-beats
         resources: {}
         volumeMounts:
         - name: config-volume
