@@ -73,11 +73,12 @@ spec:
 
 
   values:
+    meshconfig:
+      accessLogFile: /dev/stdout
+      accessLogFormat: JSON
     global:
       disablePolicyChecks: true
       proxy:
-        accessLogFile: /dev/stdout
-        accessLogFormat: JSON
         resources:
           requests:
             cpu: 10m
