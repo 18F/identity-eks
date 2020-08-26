@@ -6,13 +6,24 @@ spec:
   type: filebeat
   version: 7.8.0
   config:
-    output.logstash:
-      hosts: ["logstash:5044"]
-    filebeat.inputs:
-    - type: container
-      paths:
-      - /var/log/containers/*.log
-      processors:
+    output:
+      logstash:
+        hosts: ["logstash:5044"]
+    filebeat:
+      autodiscover:
+        providers:
+          - type: kubernetes
+            node: ${NODE_NAME}
+            hints:
+              enabled: true
+              default_config:
+                type: container
+                paths:
+                - /var/log/containers/*${data.kubernetes.container.id}.log
+    processors:
+      - add_cloud_metadata: {}
+      - add_host_metadata: {}
+      - add_kubernetes_metadata: {}
       - decode_json_fields:
           when:
             regexp:
@@ -23,13 +34,11 @@ spec:
           target: "json"
           overwrite_keys: false
           add_error_key: true
-    processors:
-      - add_cloud_metadata: {}
-      - add_host_metadata: {}
-      - add_kubernetes_metadata: {}
   daemonSet:
     podTemplate:
       spec:
+        serviceAccount: elastic-beat-filebeat
+        automountServiceAccountToken: true
         dnsPolicy: ClusterFirstWithHostNet
         hostNetwork: true
         securityContext:
@@ -54,3 +63,38 @@ spec:
           hostPath:
             path: /var/lib/docker/containers
 
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: elastic-beat-filebeat
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: elastic-beat-autodiscover-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: elastic-beat-autodiscover
+subjects:
+- kind: ServiceAccount
+  name: elastic-beat-filebeat
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: elastic-beat-autodiscover
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  - namespaces
+  - events
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
