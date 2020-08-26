@@ -16,6 +16,7 @@ spec:
     spec:
       initContainers:
       - name: install-plugins
+        image: docker.elastic.co/logstash/logstash:7.7.0
         command:
         - sh
         - -c
