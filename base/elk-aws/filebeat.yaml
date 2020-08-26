@@ -10,16 +10,20 @@ spec:
       logstash:
         hosts: ["logstash:5044"]
     filebeat:
-      autodiscover:
-        providers:
-          - type: kubernetes
-            host: ${HOSTNAME}
-            hints:
-              enabled: true
-              default_config:
-                type: container
-                paths:
-                - /var/log/containers/*${data.kubernetes.container.id}.log
+      inputs:
+      - type: container
+        paths:
+        - /var/log/containers/*.log
+      # autodiscover:
+      #   providers:
+      #     - type: kubernetes
+      #       host: ${HOSTNAME}
+      #       hints:
+      #         enabled: true
+      #         default_config:
+      #           type: container
+      #           paths:
+      #           - /var/log/containers/*${data.kubernetes.container.id}.log
     processors:
       - add_cloud_metadata: {}
       - add_host_metadata: {}
