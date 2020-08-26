@@ -6,10 +6,10 @@ metadata:
   name: logstash
 spec:
   ports:
-  - name: "25826"
+  - name: http-25826
     port: 25826
     targetPort: 25826
-  - name: "5044"
+  - name: http-beats
     port: 5044
     targetPort: 5044
   selector:
