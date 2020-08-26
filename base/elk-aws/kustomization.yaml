@@ -1,4 +1,7 @@
 resources:
-- namespace.yaml
+- eck.yaml
+- filebeat.yaml
 - logstash.yaml
+- logstash-service.yaml
+- namespace.yaml
 

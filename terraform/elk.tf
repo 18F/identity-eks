@@ -55,31 +55,6 @@ resource "aws_elasticsearch_domain" "es" {
 }
 CONFIG
 
-#   access_policies = <<CONFIG
-# {
-#   "Version": "2012-10-17",
-#   "Statement": [
-#     {
-#       "Action": "es:ESHttp*",
-#       "Principal": "${aws_eks_node_group.eks.arn}",
-#       "Effect": "Allow",
-#       "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.cluster_name}/*"
-#     },
-#     {
-#       "Effect": "Allow",
-#       "Principal": "*",
-#       "Action": "es:ESHttp*",
-#       "Condition": {
-#         "IpAddress": {
-#           "aws:SourceIp": [ ${join(", ", formatlist("\"%s\"", var.kubecontrolnets))} ]
-#         }
-#       },
-#       "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.cluster_name}/*"
-#     }
-#   ]
-# }
-# CONFIG
-
   tags = {
     Domain = var.cluster_name
   }

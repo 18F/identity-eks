@@ -101,8 +101,8 @@ resource "aws_iam_role_policy" "ebs_csi_driver" {
 EOF
 }
 
-resource "aws_iam_role_policy" "cluster_autoscaler" {
-  name = "${var.cluster_name}_cluster_autoscaler"
+resource "aws_iam_role_policy" "worker_nodes" {
+  name = "${var.cluster_name}_worker_nodes"
   role = aws_iam_role.eks-node.id
 
   policy = <<EOF
@@ -120,6 +120,11 @@ resource "aws_iam_role_policy" "cluster_autoscaler" {
         "ec2:DescribeLaunchTemplateVersions"
       ],
       "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "es:ESHttp*",
+      "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.cluster_name}/*"
     },
     {
       "Effect": "Allow",

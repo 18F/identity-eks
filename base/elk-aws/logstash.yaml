@@ -41,4 +41,3 @@ spec:
             - key: logstash.conf
               path: logstash.conf
 
-status: {}
