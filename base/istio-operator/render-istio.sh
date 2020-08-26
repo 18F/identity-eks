@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="1.6.8"
+VERSION="1.7.0"
 
 curl -Ls "https://github.com/istio/istio/releases/download/$VERSION/istio-$VERSION-osx.tar.gz" > "istio-$VERSION-osx.tar.gz"
 tar zxpf "istio-$VERSION-osx.tar.gz"
