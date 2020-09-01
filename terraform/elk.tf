@@ -42,7 +42,7 @@ resource "aws_elasticsearch_domain" "es" {
   "Statement": [
     {
       "Effect": "Allow",
-      "Principal": "*",
+      "Principal": {"AWS": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/FullAdministrator"},
       "Action": "es:ESHttp*",
       "Condition": {
         "IpAddress": {
