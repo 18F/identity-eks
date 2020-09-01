@@ -11,16 +11,16 @@ resource "aws_eks_node_group" "eks" {
   instance_types  = ["t3a.large"]
 
   scaling_config {
-    desired_size = 3
+    desired_size = 5
     max_size     = 14
-    min_size     = 2
+    min_size     = 4
   }
 
   disk_size = 120
 
   tags = {
-    "k8s.io/cluster-autoscaler/enabled"             = true,
-    "k8s.io/cluster-autoscaler/${var.cluster_name}" = true
+    "k8s.io/cluster-autoscaler/enabled"             = 1,
+    "k8s.io/cluster-autoscaler/${var.cluster_name}" = 1
   }
 
   depends_on = [
@@ -117,6 +117,7 @@ resource "aws_iam_role_policy" "worker_nodes" {
         "autoscaling:DescribeLaunchConfigurations",
         "autoscaling:DescribeTags",
         "autoscaling:SetDesiredCapacity",
+        "autoscaling:TerminateInstanceInAutoScalingGroup",
         "ec2:DescribeLaunchTemplateVersions"
       ],
       "Resource": "*"
