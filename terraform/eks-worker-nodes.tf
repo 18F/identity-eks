@@ -19,8 +19,8 @@ resource "aws_eks_node_group" "eks" {
   disk_size = 120
 
   tags = {
-    "k8s.io/cluster-autoscaler/enabled"             = 1,
-    "k8s.io/cluster-autoscaler/${var.cluster_name}" = 1
+    "k8s.io/cluster-autoscaler/enabled"             = "true",
+    "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
   }
 
   depends_on = [
@@ -111,21 +111,19 @@ resource "aws_iam_role_policy" "worker_nodes" {
   "Statement": [
     {
       "Effect": "Allow",
+      "Action": "es:ESHttp*",
+      "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.cluster_name}/*"
+    },
+    {
+      "Effect": "Allow",
       "Action": [
         "autoscaling:DescribeAutoScalingGroups",
         "autoscaling:DescribeAutoScalingInstances",
         "autoscaling:DescribeLaunchConfigurations",
         "autoscaling:DescribeTags",
-        "autoscaling:SetDesiredCapacity",
-        "autoscaling:TerminateInstanceInAutoScalingGroup",
         "ec2:DescribeLaunchTemplateVersions"
       ],
       "Resource": "*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": "es:ESHttp*",
-      "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.cluster_name}/*"
     },
     {
       "Effect": "Allow",
@@ -134,9 +132,7 @@ resource "aws_iam_role_policy" "worker_nodes" {
         "autoscaling:TerminateInstanceInAutoScalingGroup",
         "autoscaling:UpdateAutoScalingGroup"
       ],
-      "Resource": [
-        ${join(",", formatlist("\"arn:aws:autoscaling:${var.region}:${data.aws_caller_identity.current.account_id}:autoScalingGroup::autoScalingGroupName/%s\"", flatten(aws_eks_node_group.eks.resources[*].autoscaling_groups[*].name)))}
-      ],
+      "Resource": "*",
       "Condition": {
         "StringEquals": {
           "autoscaling:ResourceTag/k8s.io/cluster-autoscaler/enabled": "true",

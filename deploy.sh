@@ -107,7 +107,7 @@ pushd "$RUN_BASE/base/alb-ingress-controller/"
 ./install-albingress.sh "$TF_VAR_cluster_name" || true
 popd
 # XXX same with the cluster autoscaler
-$RUN_BASE/base/cluster-autoscaler/install-clusterautoscaler.sh "$TF_VAR_cluster_name" || true
+$RUN_BASE/base/cluster-autoscaler/install-clusterautoscaler.sh "$TF_VAR_cluster_name" "$REGION" || true
 
 
 # bootstrap argocd
