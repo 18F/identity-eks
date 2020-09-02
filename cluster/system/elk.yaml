@@ -62,4 +62,8 @@ spec:
     kind: CustomResourceDefinition
     jsonPointers:
     - /status
+  - group: beats.beat.k8s.elastic.co
+    kind: CustomResourceDefinition
+    jsonPointers:
+    - /spec/validation/openAPIV3Schema/spec/properties/daemonSet/properties
 

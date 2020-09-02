@@ -27,7 +27,6 @@ spec:
           overwrite_keys: false
           add_error_key: true
   daemonSet:
-    properties: {}
     podTemplate:
       spec:
         dnsPolicy: ClusterFirstWithHostNet
