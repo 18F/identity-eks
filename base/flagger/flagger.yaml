@@ -6,7 +6,7 @@ metadata:
   name: flagger
   annotations:
   labels:
-    helm.sh/chart: flagger-1.0.1
+    helm.sh/chart: flagger-1.1.0
     app.kubernetes.io/name: flagger
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: flagger
@@ -17,7 +17,7 @@ kind: ClusterRole
 metadata:
   name: flagger
   labels:
-    helm.sh/chart: flagger-1.0.1
+    helm.sh/chart: flagger-1.1.0
     app.kubernetes.io/name: flagger
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: flagger
@@ -196,7 +196,7 @@ kind: ClusterRoleBinding
 metadata:
   name: flagger
   labels:
-    helm.sh/chart: flagger-1.0.1
+    helm.sh/chart: flagger-1.1.0
     app.kubernetes.io/name: flagger
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: flagger
@@ -215,7 +215,7 @@ kind: Deployment
 metadata:
   name: flagger
   labels:
-    helm.sh/chart: flagger-1.0.1
+    helm.sh/chart: flagger-1.1.0
     app.kubernetes.io/name: flagger
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: flagger
@@ -248,14 +248,14 @@ spec:
                     app.kubernetes.io/name: flagger
                     app.kubernetes.io/instance: flagger
                 topologyKey: kubernetes.io/hostname
-      volumes:
+      volumes:                  
       containers:
         - name: flagger
           securityContext:
             readOnlyRootFilesystem: true
             runAsUser: 10001
           volumeMounts:
-          image: "weaveworks/flagger:1.0.1"
+          image: "weaveworks/flagger:1.1.0"
           imagePullPolicy: IfNotPresent
           ports:
           - name: http
