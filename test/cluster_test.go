@@ -2,6 +2,7 @@ package test
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -134,6 +135,34 @@ func TestArgo(t *testing.T) {
 			isOk := statusCode == 200
 			isArgo := strings.Contains(body, "<title>Argo CD</title>")
 			return isOk && isArgo
+		},
+	)
+}
+
+func TestArgoClusterStatus(t *testing.T) {
+	t.Parallel()
+
+	options := k8s.NewKubectlOptions("", "", "argocd")
+	tunnel := k8s.NewTunnel(options, k8s.ResourceTypeService, "argocd-server", 0, 8080)
+	defer tunnel.Close()
+	tunnel.ForwardPort(t)
+
+	endpoint := fmt.Sprintf("https://%s/api/v1/applications/cluster", tunnel.Endpoint())
+	tlsconfig := tls.Config{InsecureSkipVerify: true}
+	http_helper.HttpGetWithRetryWithCustomValidation(
+		t,
+		endpoint,
+		&tlsconfig,
+		5,
+		1*time.Second,
+		func(statusCode int, body string) bool {
+			var clusterstate map[string]interface{}
+			err := json.Unmarshal([]byte(body), &clusterstate)
+			assert.Nil(t, err)
+
+			status := clusterstate["status"].(map[string]interface{})
+			health := status["health"].(map[string]interface{})
+			return health["status"] == "Healthy"
 		},
 	)
 }
