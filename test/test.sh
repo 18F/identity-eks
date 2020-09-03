@@ -17,6 +17,6 @@ ACCOUNT=$(aws sts get-caller-identity | jq -r .Account)
 export REGION="us-west-2"
 export BUCKET="login-dot-gov-secops.${ACCOUNT}-${REGION}"
 
-#go test -v -timeout 30m -run TestArgoClusterStatus
+#go test -v -timeout 30m -run TestPrometheus
 go test -v -timeout 30m
 

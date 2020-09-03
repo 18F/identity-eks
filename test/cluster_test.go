@@ -167,6 +167,18 @@ func TestArgoClusterStatus(t *testing.T) {
 	)
 }
 
+func TestPrometheus(t *testing.T) {
+	t.Parallel()
+
+	options := k8s.NewKubectlOptions("", "", "istio-system")
+	tunnel := k8s.NewTunnel(options, k8s.ResourceTypeService, "prometheus", 0, 9090)
+	defer tunnel.Close()
+	tunnel.ForwardPort(t)
+
+	url := fmt.Sprintf("http://%s/-/ready", tunnel.Endpoint())
+	http_helper.HttpGetWithRetry(t, url, nil, 200, "Prometheus is Ready.", 10, 3*time.Second)
+}
+
 func TestFalco(t *testing.T) {
 	t.Parallel()
 
