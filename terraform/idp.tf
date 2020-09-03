@@ -41,7 +41,8 @@ resource "aws_db_instance" "idp" {
   #
   #skip_final_snapshot = true
   lifecycle {
-    prevent_destroy = true
+    # XXX really should have this set, but you need this turned off so that tests can work.  :-(
+    #prevent_destroy = true
 
     # we set the password by hand so it doesn't end up in the state file
     ignore_changes = [password]
