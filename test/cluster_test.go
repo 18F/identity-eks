@@ -1,13 +1,15 @@
 package test
 
 import (
-	// "fmt"
+	"crypto/tls"
+	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"testing"
 	"time"
 
-	// http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
+	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
@@ -56,23 +58,25 @@ func TestTerraform(t *testing.T) {
 	assert.Contains(t, idp_configmap, domain_name_line)
 }
 
-func TestKubernetes(t *testing.T) {
-	t.Parallel()
-
+func TestKubernetesUp(t *testing.T) {
 	// Make sure that the context is set up
 	cmd := exec.Command("aws", "eks", "update-kubeconfig", "--name", cluster_name)
 	err := cmd.Run()
 	assert.Nil(t, err)
+	options := k8s.NewKubectlOptions("", "", "default")
+
+	// Make sure it's up
+	k8s.WaitUntilAllNodesReady(t, options, 300, 1*time.Second)
 
 	// Verify all the services are available
-	options := k8s.NewKubectlOptions("", "", "argocd")
-	k8s.WaitUntilServiceAvailable(t, options, "argocd-server", 10, 1*time.Second)
-	k8s.WaitUntilServiceAvailable(t, options, "argocd-server-metrics", 10, 1*time.Second)
-	k8s.WaitUntilServiceAvailable(t, options, "argocd-repo-server", 10, 1*time.Second)
-	k8s.WaitUntilServiceAvailable(t, options, "argocd-dex-server", 10, 1*time.Second)
+	options = k8s.NewKubectlOptions("", "", "argocd")
+	k8s.WaitUntilServiceAvailable(t, options, "argocd-server", 120, 1*time.Second)
+	k8s.WaitUntilServiceAvailable(t, options, "argocd-server-metrics", 60, 1*time.Second)
+	k8s.WaitUntilServiceAvailable(t, options, "argocd-repo-server", 120, 1*time.Second)
+	k8s.WaitUntilServiceAvailable(t, options, "argocd-dex-server", 120, 1*time.Second)
 	k8s.WaitUntilServiceAvailable(t, options, "argocd-metrics", 10, 1*time.Second)
-	k8s.WaitUntilServiceAvailable(t, options, "argocd-redis", 10, 1*time.Second)
-	k8s.WaitUntilServiceAvailable(t, options, "argocd-repo-server", 10, 1*time.Second)
+	k8s.WaitUntilServiceAvailable(t, options, "argocd-redis", 120, 1*time.Second)
+	k8s.WaitUntilServiceAvailable(t, options, "argocd-repo-server", 120, 1*time.Second)
 
 	options = k8s.NewKubectlOptions("", "", "kube-system")
 	k8s.WaitUntilServiceAvailable(t, options, "eksclusterautoscaler-aws-cluster-autoscaler-chart", 10, 1*time.Second)
@@ -108,6 +112,52 @@ func TestKubernetes(t *testing.T) {
 	k8s.WaitUntilServiceAvailable(t, options, "idp-canary", 10, 1*time.Second)
 	k8s.WaitUntilServiceAvailable(t, options, "idp-primary", 10, 1*time.Second)
 	k8s.WaitUntilServiceAvailable(t, options, "idp-redis", 10, 1*time.Second)
+}
+
+func TestArgo(t *testing.T) {
+	t.Parallel()
+
+	options := k8s.NewKubectlOptions("", "", "argocd")
+	tunnel := k8s.NewTunnel(options, k8s.ResourceTypeService, "argocd-server", 0, 8080)
+	defer tunnel.Close()
+	tunnel.ForwardPort(t)
+
+	endpoint := fmt.Sprintf("https://%s", tunnel.Endpoint())
+	tlsconfig := tls.Config{InsecureSkipVerify: true}
+	http_helper.HttpGetWithRetryWithCustomValidation(
+		t,
+		endpoint,
+		&tlsconfig,
+		5,
+		1*time.Second,
+		func(statusCode int, body string) bool {
+			isOk := statusCode == 200
+			isArgo := strings.Contains(body, "<title>Argo CD</title>")
+			return isOk && isArgo
+		},
+	)
+}
+
+func TestFalco(t *testing.T) {
+	t.Parallel()
+
+	options := k8s.NewKubectlOptions("", "", "kube-system")
+	ds := k8s.GetDaemonSet(t, options, "falco")
+	nodes := k8s.GetNodes(t, options)
+
+	// Make sure that the daemonset has as many ready instances as there are nodes
+	assert.Equal(t, int(ds.Status.NumberReady), len(nodes))
+}
+
+func TestClamav(t *testing.T) {
+	t.Parallel()
+
+	options := k8s.NewKubectlOptions("", "", "kube-system")
+	ds := k8s.GetDaemonSet(t, options, "clamav")
+	nodes := k8s.GetNodes(t, options)
+
+	// Make sure that the daemonset has as many ready instances as there are nodes
+	assert.Equal(t, int(ds.Status.NumberReady), len(nodes))
 }
 
 // // XXX somehow I broke the idp while messing around with istio
