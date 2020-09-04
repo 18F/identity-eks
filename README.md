@@ -160,7 +160,8 @@ XXX
 * get email (SES) working
 * get assets/external hostnames working (s3/cloudfront? short term might be to pass in lb name somehow and use that)
 * DONE: get ACM or LE issuing certs
-* figure out secrets strategy (use k8s secrets with kms backend?  vault?  s3 bucket?)
+* DONE: figure out secrets strategy:  Use k8s secrets store, as etcd is now encrypted in EKS (https://github.com/aws/containers-roadmap/issues/263)
+* Create system to prime secrets from s3 during bootstrap/update (right now, is sorta manual with script in idp repo)
 * get outbound filtering going (https://monzo.com/blog/controlling-outbound-traffic-from-kubernetes https://github.com/monzo/egress-operator)
 * DONE: get ALB ingress controller working instead of ELB?
 * DONE: (use istio) figure out how to get idp using SSL (use alb ingress controller with a cert and back end ssl annotation, make istio ingress, done)
@@ -172,12 +173,14 @@ XXX
 * get ELK importing from cloudtrail/cloudwatch
 * set ELK up to perform well (own nodegroup with fast local storage? Or maybe just request io1 storage?  Maybe look at CPU limits too? Since we have PVs, we don't need to worry about resyncing anymore, though)
 * get alerting going:  elastalert?  metrics from newrelic or prometheus?
-* figure out if we really need an IDP for auth, or if we can use IAM roles with port forwarding or a cert-auth proxy instead
-* really look at the somewhat baroque terraform state stuff that was basically lifted from identity-devops and see if we can make it less ugly
+* figure out if we really need an IDP for auth, or if we can use IAM roles with port forwarding or a cert-auth proxy instead (haven't found a hard requirement for IDP yet)
+* PARTLY DONE: really look at the somewhat baroque terraform state stuff that was basically lifted from identity-devops and see if we can make it less ugly
 * set up a "hub" cluster that manages the permanent clusters (basically, just set up IAM role and run deploy.sh)
 * make sure we have a good node/cluster update strategy:  https://docs.aws.amazon.com/cli/latest/reference/eks/update-nodegroup-version.html and the cluster version in the tf code
 * Figure out how to buff up CI pipeline so that it does container scanning and does builds/tests when the base images are updated, promote images to dev env automatically.
+* DONE:  Get infrastructure tests going.  See `./test` for details.  More could be added.
 * Figure out how to get kms correlation engine going:  send kms logs into cloudwatch?  Rework engine to slurp from ELK?
 * make sure WAF is going on our services
 * clean up clamav logging (no noise)
 * dig into falco and make it's alerts useful to us (good canaries, no noise)
+* get twistlock going in-cluster?
