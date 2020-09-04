@@ -63,7 +63,6 @@ spec:
     jsonPointers:
     - /status
   - group: apiextensions.k8s.io
-    name: beats.beat.k8s.elastic.co
     kind: CustomResourceDefinition
     jsonPointers:
     - /spec/validation/openAPIV3Schema/properties/spec/properties/daemonSet/properties
