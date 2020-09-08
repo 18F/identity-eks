@@ -1,5 +1,0 @@
-namespace: powerdns
-resources:
-- namespace.yaml
-- powerdns.yaml
-
