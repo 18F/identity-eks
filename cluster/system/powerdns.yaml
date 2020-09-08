@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: https://github.com/cdwv/powerdns-helm.git
     targetRevision: HEAD
-    chart: .
+    chart: powerdns-helm
 
     helm:
       releaseName: pdns
