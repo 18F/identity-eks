@@ -13,19 +13,11 @@ spec:
 
   # Source of the application manifests
   source:
-    repoURL: https://github.com/18F/identity-eks.git
+    repoURL: https://github.com/cdwv/powerdns-helm.git
     targetRevision: HEAD
-    path: base/pdns
 
-    # kustomize specific config
-    kustomize:
-      # Optional kustomize version. Note: version must be configured in argocd-cm ConfigMap
-      version: default
-      # Optional image name prefix
-      #namePrefix: system-
-      # Optional images passed to "kustomize edit set image".
-      #images:
-      #- logindotgov/pretend-app
+    helm:
+      releaseName: pdns
 
 
   # Destination cluster and namespace to deploy the application
