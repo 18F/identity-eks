@@ -208,5 +208,5 @@ func TestClamav(t *testing.T) {
 // 	url := fmt.Sprintf("https://%s/api/health/", idp_hostname)
 
 // 	// Make an HTTP request to the URL and make sure it is healthy
-// 	http_helper.HttpGetWithRetry(t, url, nil, 200, "healthy\":true", 10, 3*time.Second)
+// 	http_helper.HttpGetWithRetry(t, url, nil, 200, "all_checks_healthy\":true", 10, 3*time.Second)
 // }
