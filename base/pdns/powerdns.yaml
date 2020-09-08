@@ -1,0 +1,193 @@
+---
+# Source: powerdns/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pdns-powerdns
+  labels:
+    app.kubernetes.io/name: powerdns
+    helm.sh/chart: powerdns-0.2.0
+    app.kubernetes.io/instance: pdns
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: powerdns/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pdns-powerdns
+  labels:
+    app.kubernetes.io/name: powerdns
+    helm.sh/chart: powerdns-0.2.0
+    app.kubernetes.io/instance: pdns
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  postgres_host: "bG9jYWxob3N0"
+  postgres_port: "NTQzMg=="
+  postgres_username: "cGRucw=="
+  postgres_password: ""
+  postgres_database: "cGRucw=="
+---
+# Source: powerdns/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pdns-powerdns
+  labels:
+    app.kubernetes.io/name: powerdns
+    helm.sh/chart: powerdns-0.2.0
+    app.kubernetes.io/instance: pdns
+    app.kubernetes.io/managed-by: Helm
+data:
+  01-general-config.conf: |
+---
+# Source: powerdns/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pdns-powerdns-udp
+  annotations:
+    metallb.universe.tf/allow-shared-ip: pdns-powerdns
+  labels:
+    app.kubernetes.io/name: powerdns
+    helm.sh/chart: powerdns-0.2.0
+    app.kubernetes.io/instance: pdns
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: LoadBalancer
+  
+  ports:
+    - name: dns-udp
+      port: 53
+      protocol: UDP
+  selector:
+    app.kubernetes.io/name: powerdns
+    app.kubernetes.io/instance: pdns
+---
+# Source: powerdns/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pdns-powerdns-tcp
+  annotations:
+    metallb.universe.tf/allow-shared-ip: pdns-powerdns
+  labels:
+    app.kubernetes.io/name: powerdns
+    helm.sh/chart: powerdns-0.2.0
+    app.kubernetes.io/instance: pdns
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: LoadBalancer
+  
+  ports:
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: powerdns
+    app.kubernetes.io/instance: pdns
+---
+# Source: powerdns/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pdns-powerdns
+  labels:
+    app.kubernetes.io/name: powerdns
+    helm.sh/chart: powerdns-0.2.0
+    app.kubernetes.io/instance: pdns
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: powerdns
+      app.kubernetes.io/instance: pdns
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: powerdns
+        app.kubernetes.io/instance: pdns
+      annotations:
+        checksum/config: a53e0752289a7885b7c7d509d3560a287bbb725ac39d53cfa77d0dd6c63fa844057ddd0ad709d92485de39e3f4a530f180929646b28d68a7301631bb15d86d73
+    spec:
+      serviceAccountName: pdns-powerdns
+      securityContext:
+        {}
+      containers:
+        - name: powerdns
+          securityContext:
+            {}
+          image: "discourse/powerdns:latest"
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: config
+            mountPath: /etc/powerdns/pdns.d
+          env:
+            - name: PGSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: pdns-powerdns
+                  key: postgres_host
+            - name: PGSQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pdns-powerdns
+                  key: postgres_port
+            - name: PGSQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: pdns-powerdns
+                  key: postgres_username
+            - name: PGSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pdns-powerdns
+                  key: postgres_password
+            - name: PGSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: pdns-powerdns
+                  key: postgres_database
+            - name: PGSQL_DNSSEC
+              value: "yes"
+          ports:
+            - name: dns-tcp
+              containerPort: 53
+              protocol: TCP
+            - name: dns-udp
+              containerPort: 53
+              protocol: UDP
+
+          resources:
+            {}
+      volumes:
+      - name: config
+        configMap:
+          name: pdns-powerdns
+---
+# Source: powerdns/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "pdns-powerdns-test-connection"
+  labels:
+    app.kubernetes.io/name: powerdns
+    helm.sh/chart: powerdns-0.2.0
+    app.kubernetes.io/instance: pdns
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args:  ['pdns-powerdns:53']
+  restartPolicy: Never

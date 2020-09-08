@@ -10,5 +10,6 @@ resources:
   - dashboard.yaml
   - metrics-server.yaml
   - flagger.yaml
+  - powerdns.yaml
   - spot-termination.yaml
 
