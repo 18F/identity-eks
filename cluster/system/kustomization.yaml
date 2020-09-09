@@ -5,11 +5,10 @@ resources:
   - falco.yaml
   - external-dns.yaml
   - clamav.yaml
-#  - elk.yaml
-  - elk-aws.yaml
+  - elk.yaml
+#  - elk-aws.yaml
   - dashboard.yaml
   - metrics-server.yaml
   - flagger.yaml
   - spot-termination.yaml
-  - pdns.yaml
 
