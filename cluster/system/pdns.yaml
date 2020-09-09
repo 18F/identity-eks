@@ -13,7 +13,7 @@ spec:
 
   # Source of the application manifests
   source:
-    repoURL: https://github.com/cdwv/powerdns-helm
+    repoURL: https://github.com/cdwv/powerdns-helm.git
     targetRevision: "*"
     path: ''
     chart: powerdns-helm
