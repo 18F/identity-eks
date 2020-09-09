@@ -1,0 +1,4 @@
+
+mariadb.enabled: true
+mariadb.persistence.enabled: true
+

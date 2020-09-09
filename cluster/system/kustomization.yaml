@@ -11,4 +11,5 @@ resources:
   - metrics-server.yaml
   - flagger.yaml
   - spot-termination.yaml
+#  - pdns.yaml
 
