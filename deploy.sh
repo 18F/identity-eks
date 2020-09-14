@@ -19,6 +19,7 @@ else
         fi
      fi
      export TF_VAR_cluster_name="$1"
+     export TF_VAR_cluster_type="$2"
 fi
 
 checkbinary() {
@@ -62,23 +63,24 @@ terraform init -backend-config="bucket=$BUCKET" \
       -backend-config="dynamodb_table=secops_terraform_locks" \
       -backend-config="region=$REGION" \
       -upgrade
+
+# XXX If you are migrating from an older version of the cluster, uncomment these, run the deploy, then comment them out.
+# terraform import kubernetes_namespace.idp idp
+# terraform import kubernetes_namespace.elk elk
+# terraform import kubernetes_config_map.aws_auth kube-system/aws-auth
+# terraform import kubernetes_config_map.idp-config idp/idp-config
+# terraform import kubernetes_service.idp-redis idp/idp-redis
+# terraform import kubernetes_ingress.idp-ingress istio-system/idp-ingress
+
 terraform apply
 
 # This updates the kubeconfig so that the nodes can talk with the masters
 # and also maps IAM roles to users.
 aws eks update-kubeconfig --name "$TF_VAR_cluster_name"
-
-# update the kubernetes services/configmaps using terraform data.
-terraform output config_map_aws_auth | kubectl apply -f -
-kubectl create namespace idp && true
-terraform output idp_redis_service | kubectl apply -f - -n idp
-terraform output idp_configmap | kubectl apply -f - -n idp
-kubectl create namespace elk && true
-# terraform output logstash_config | kubectl apply -f - -n elk
-
 popd
 
 # this turns on the EBS persistent volume stuff and make it the default
+# XXX are we going to run into problems with this not being set up before terraform?
 if kubectl describe sc ebs >/dev/null ; then
 	echo ebs persistant storage already set up
 else
@@ -89,26 +91,6 @@ if kubectl get sc | grep -E '^gp2.*default' >/dev/null ; then
     kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
     kubectl patch storageclass ebs -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 fi
-
-# install linkerd
-# XXX this has to be done here rather than as an application, since
-# the linkerd helm chart puts the trust anchor key right in it, so we can't check
-# it in.  Ideally, we have certmanager do this, and there is some discussion
-# about this here: https://github.com/linkerd/linkerd2/issues/3745 but it is
-# not yet happening.
-#pushd "$RUN_BASE/base/linkerd/"
-#./install-linkerd.sh
-#popd
-
-# install alb ingress controller
-# XXX this has to be here because it needs to be run inline because it needs to know the
-# name of the EKS cluster that it is deployed in.
-pushd "$RUN_BASE/base/alb-ingress-controller/"
-./install-albingress.sh "$TF_VAR_cluster_name" || true
-popd
-# XXX same with the cluster autoscaler
-$RUN_BASE/base/cluster-autoscaler/install-clusterautoscaler.sh "$TF_VAR_cluster_name" "$REGION" || true
-
 
 # bootstrap argocd
 kustomize build "$RUN_BASE/base/argocd" | kubectl apply -f -
@@ -121,10 +103,3 @@ else
   kubectl apply -f "$RUN_BASE/cluster-$2/cluster.yaml"
   #kustomize build "$RUN_BASE/cluster-$2" | kubectl apply -f -
 fi
-
-pushd "$SCRIPT_BASE/terraform"
-sleep 5
-terraform output idp_ingress | kubectl apply -f - -n istio-system
-sleep 5
-terraform output idp_gateway | kubectl apply -f - -n idp
-popd
