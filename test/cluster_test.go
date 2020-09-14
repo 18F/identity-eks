@@ -49,14 +49,6 @@ func TestTerraform(t *testing.T) {
 	// website::tag::2::Run "terraform init" and "terraform apply".
 	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
 	terraform.InitAndApply(t, terraformOptions)
-
-	// Run `terraform output` to get the values of output variables
-	idp_configmap := terraform.Output(t, terraformOptions, "idp_configmap")
-
-	// website::tag::3::Check the output against expected values.
-	// Verify we're getting back the outputs we expect
-	domain_name_line := "domain_name: " + idp_hostname
-	assert.Contains(t, idp_configmap, domain_name_line)
 }
 
 func TestKubernetesUp(t *testing.T) {
@@ -91,8 +83,8 @@ func TestKubernetesUp(t *testing.T) {
 	options = k8s.NewKubectlOptions("", "", "elastic-system")
 	k8s.WaitUntilServiceAvailable(t, options, "elastic-webhook-server", 10, 1*time.Second)
 
-	options = k8s.NewKubectlOptions("", "", "elk")
-	k8s.WaitUntilServiceAvailable(t, options, "logstash", 10, 1*time.Second)
+	// options = k8s.NewKubectlOptions("", "", "elk")
+	// k8s.WaitUntilServiceAvailable(t, options, "logstash", 10, 1*time.Second)
 
 	options = k8s.NewKubectlOptions("", "", "istio-operator")
 	k8s.WaitUntilServiceAvailable(t, options, "istio-operator", 10, 1*time.Second)

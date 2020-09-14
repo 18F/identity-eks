@@ -72,6 +72,7 @@ terraform init -backend-config="bucket=$BUCKET" \
 # terraform import kubernetes_service.idp-redis idp/idp-redis
 # terraform import kubernetes_ingress.idp-ingress istio-system/idp-ingress
 
+# launch everything!
 terraform apply
 
 # This updates the kubeconfig so that the nodes can talk with the masters
@@ -79,8 +80,7 @@ terraform apply
 aws eks update-kubeconfig --name "$TF_VAR_cluster_name"
 popd
 
-# this turns on the EBS persistent volume stuff and make it the default
-# XXX are we going to run into problems with this not being set up before terraform?
+# This turns on the EBS persistent volume stuff and make it the default.
 if kubectl describe sc ebs >/dev/null ; then
 	echo ebs persistant storage already set up
 else
