@@ -74,7 +74,7 @@ kubectl create namespace idp && true
 terraform output idp_redis_service | kubectl apply -f - -n idp
 terraform output idp_configmap | kubectl apply -f - -n idp
 kubectl create namespace elk && true
-terraform output logstash_config | kubectl apply -f - -n elk
+# terraform output logstash_config | kubectl apply -f - -n elk
 
 popd
 
