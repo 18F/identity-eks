@@ -3,13 +3,15 @@
 This is where the login.gov devops and secops teams can collaborate on containerization,
 security, and a potential new system for deploying our idp application.
 
+If you want to learn how kubernetes works, a light, fun resource is: http://phippy.io/
+
 ## Architecture
 
 ### External Setup
 
 Terraform is used to minimally set up EKS and create AWS resources.
-Terraform is _capable_ of managing kubernetes resources, but doing so requires you to set up your
-kubeconfig, which results in a sort of chicken and egg problem.  Many of the resources you would want
+Terraform is _capable_ of managing kubernetes resources, and we do so for a few resources,
+but it seems like a good idea to minimize this.  Many of the resources you would want
 to manage also require translating your manifests into HCL, which seems like a pain to manage.
 Thus, we encourage the use of terraform and AWS tooling to be confined as much as possible to managing
 the external state of EKS and the services we are creating for it.
@@ -67,7 +69,9 @@ run `./setup.sh your-clustername`.
 
 There are also a number of `cluster-*` directories which hold configuration for other kinds
 of clusters.  To set up one of those, you can run `./setup.sh your-clustername clustertype`,
-where `clustertype` is the suffix on the cluster dir that you want to apply.
+where `clustertype` is the suffix on the cluster dir that you want to apply.  Right now, the
+clustertypes dirs are not kept up to date very well.  Most work has been focused on just playing
+with the `cluster` directory.
 
 Example:  `./setup.sh devops-test elk`
 
@@ -86,11 +90,9 @@ We need to provision AWS resources, including an EKS cluster.  This is done with
 it lives in the terraform directory.  Add what you need there and then run
 `./deploy.sh your-clustername`.
 
-If you need to pass in information about the resources you just created to EKS, look at the
-`terraform/outputs.tf` file.  You can look at some of the examples in there on how to create
-some different kinds of things like services or secrets that get used in EKS.  Once you have
-an output set up, make sure it's applied by editing `deploy.sh` and adding it in with the
-other outputs.  Then run `./deploy.sh your-clustername` to make it actually apply!
+If you need to pass in information about the resources you just created to EKS, you ought
+to be able to use the stuff in the `terraform/k8s.tf` file as an example on how to plug in
+a configmap or a service into a namespace for deployments to use.
 
 ### Cluster Applications
 
@@ -108,7 +110,8 @@ there too, though I've not used that aspect yet.
 You can use helm in the application manifests too, but then you lose the ability to see what exactly is
 being deployed.  I think it's better to use application manifests that point at git repos which contain
 yaml that you want deployed, whether that yaml comes from `helm template` or is written by you.
-This is what _declarative_ really means.
+That said, as time goes on, I am less resistant to just using helm sometimes.  It is basically another
+form of package management, a concept that we know and trust in other contexts.
 
 If you have changes to the applications pointed to by the argo manifests, you can just make
 changes and check them in to git.  Once your changes are seen, argo will automatically deploy
@@ -116,7 +119,7 @@ your changes.
 
 # Workflow
 
-XXX
+XXX This is a proposed flow.  Needs work.
 
 * local development
 * check code into dev branch:  CI runs
@@ -138,7 +141,7 @@ your tests, then shut down the cluster once you are done to minimize cost.
 
 ## Getting Logs
 
-You can use kibana with `kubectl port-forward service/kibana-kibana 5601 -n elk`, or you can
+You can use kibana with `kubectl port-forward service/kibana-kb-http 5601 -n elastic-system`, or you can
 get a small buffer of logs by using `kubectl logs pod/<podname> -n <namespace>`.  You can find
 the pod names with a command like `kubectl get pods -n <namespace>`.
 
@@ -154,6 +157,31 @@ if you have a service mesh running.
 # Security
 
 XXX
+
+All by itself, containerization will make our security story much
+better than what we have now.  Every process is running in it's own
+LXC container, which provides fine-grained control over every aspect
+of what the process in the container can do.  We are not yet sure
+that we can pull this off, but we may be able to actually run all of
+our customer-facing containers with read-only filesystems, which would
+be a huge step forward.  In addition, we expect that every container
+will be built, tested, and scanned for vulnerabilities well ahead of
+when the container is rolled out.
+
+We are using clamav for our compliance-mandated malware scanning. 
+It generates a lot of noise right now, and needs to be tuned.
+
+We are using falco to listen to the syscall behavior of our pods to detect
+malicious behavior.  It also is noisy, and needs tuning and probably a
+few canaries built into it.
+
+We have an idea that twistlock would be a good thing to plug in as well,
+thoug no work has been done on that yet.
+
+Along with regular app logs and cloudtrail, we should have a tremendous
+amount of visibility into the behavior of our system, from the IAAS level
+down to syscalls.  All that remains is to decide what is important
+and to alert on it.
 
 # TODO
 * figure out how to make database optional, so that we can deploy the `cluster-elk` type of cluster without a db.

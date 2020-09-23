@@ -75,8 +75,7 @@ terraform init -backend-config="bucket=$BUCKET" \
 # launch everything!
 terraform apply
 
-# This updates the kubeconfig so that the nodes can talk with the masters
-# and also maps IAM roles to users.
+# This updates the kubeconfig so that we can access the cluster using kubectl
 aws eks update-kubeconfig --name "$TF_VAR_cluster_name"
 popd
 
@@ -95,7 +94,7 @@ fi
 # bootstrap argocd
 kustomize build "$RUN_BASE/base/argocd" | kubectl apply -f -
 
-# apply k8s config for this cluster
+# apply k8s config for this cluster by telling argo what to run.
 if [ -z "$2" ] ; then
   kubectl apply -f "$RUN_BASE/cluster/cluster.yaml"
   #kustomize build "$RUN_BASE/cluster" | kubectl apply -f -
