@@ -192,7 +192,7 @@ and to alert on it.
 * Create system to prime secrets from s3 during bootstrap/update (right now, is sorta manual with script in idp repo)
 * get outbound filtering going (https://monzo.com/blog/controlling-outbound-traffic-from-kubernetes https://github.com/monzo/egress-operator)
 * DONE: get ALB ingress controller working instead of ELB?
-* DONE: (use istio) figure out how to get idp using SSL (use alb ingress controller with a cert and back end ssl annotation, make istio ingress, done)
+* DONE, but I broke it somehow after getting it working: (use istio) figure out how to get idp using SSL (use alb ingress controller with a cert and back end ssl annotation, make istio ingress, done)
 * get pivcac going (could we make this be on all hosts?)
 * try to bug people into making config for the idp less crazy
 * DONE:  get dashboard going so we can see how the cluster is doing with memory/CPU
