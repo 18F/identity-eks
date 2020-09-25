@@ -1,0 +1,70 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: elk-eck
+  # You'll usually want to add your resources to the argocd namespace.
+  namespace: argocd
+  # Add a this finalizer ONLY if you want these to cascade delete.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # The project the application belongs to.
+  project: default
+
+  # Source of the application manifests
+  source:
+    repoURL: https://github.com/18F/identity-eks.git
+    targetRevision: HEAD
+    path: base/elk-eck
+
+    # kustomize specific config
+    kustomize:
+      # Optional kustomize version. Note: version must be configured in argocd-cm ConfigMap
+      version: default
+      # Optional image name prefix
+      #namePrefix: system-
+      # Optional images passed to "kustomize edit set image".
+      #images:
+      #- logindotgov/pretend-app
+
+
+  # Destination cluster and namespace to deploy the application
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: elastic-system
+
+  # Sync policy
+  syncPolicy:
+    automated:
+      prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
+      selfHeal: true # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
+    syncOptions:     # Sync options which modifies sync behavior
+    - Validate=false # disables resource validation (equivalent to 'kubectl apply --validate=true')
+
+  # Ignore differences at the specified json pointers
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
+    jsonPointers:
+    - /webhooks/0/clientConfig/caBundle
+    - /webhooks/1/clientConfig/caBundle
+    - /webhooks/2/clientConfig/caBundle
+    - /webhooks/3/clientConfig/caBundle
+    - /webhooks/4/clientConfig/caBundle
+    - /webhooks/5/clientConfig/caBundle
+    - /webhooks/6/clientConfig/caBundle
+    - /webhooks/7/clientConfig/caBundle
+  - group: kibanas.kibana.k8s.elastic.co
+    kind: CustomResourceDefinition
+    jsonPointers:
+    - /status
+  - group: apiextensions.k8s.io
+    kind: CustomResourceDefinition
+    name: beats.beat.k8s.elastic.co
+    jsonPointers:
+    - /spec/validation/openAPIV3Schema/properties/spec/properties/daemonSet/properties
+

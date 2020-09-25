@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tspencer-env
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: terraform
+        image: gsatspencer/identity-terraform
+        resources:
+          requests:
+            memory: "1024Mi"
+            cpu: ".1"
+          limits:
+            memory: "2048Mi"
+            cpu: "2"
+        env:
+        - name: TF_ENVIRONMENT
+          value: "tspencer"
+        - name: TF_DIR
+          value: "app"
+        - name: TF_IDPHOSTNAME
+          value: "secure.tspencer.identitysandbox.gov"
+        - name: BRANCH
+          value: "stages/tspencer"
+        volumeMounts:
+        - name: deploy-key
+          mountPath: "/.ssh"
+          readOnly: true
+      volumes:
+      - name: deploy-key
+        secret:
+          secretName: deploy-key
+
