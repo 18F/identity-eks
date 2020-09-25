@@ -93,6 +93,7 @@ fi
 
 # bootstrap argocd
 kustomize build "$RUN_BASE/base/argocd" | kubectl apply -f -
+kubectl create namespace idp
 
 # apply k8s config for this cluster by telling argo what to run.
 if [ -z "$2" ] ; then

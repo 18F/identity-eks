@@ -49,8 +49,8 @@ terraform init -backend-config="bucket=$BUCKET" \
       -upgrade
 
 # forget about the state bucket and dynamo lock table
-terraform state rm aws_s3_bucket.tf-state
-terraform state rm aws_dynamodb_table.tf-lock-table
+#terraform state rm aws_s3_bucket.tf-state
+#terraform state rm aws_dynamodb_table.tf-lock-table
 
 echo "You will have to comment out the lifecycle prevent_destroy line in terraform/idp.tf to make this work."
 echo "Make sure that you don't check this in!!!!  We do _not_ ever want to accidentally destroy idp data!!"
