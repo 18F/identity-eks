@@ -1,5 +1,5 @@
 resources:
   - namespace.yaml
   - project.yaml
-  - ./tspencer-env/
+  - ./tspencer-env/application.yaml
 
