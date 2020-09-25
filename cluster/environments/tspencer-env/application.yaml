@@ -13,9 +13,9 @@ spec:
 
   # Source of the application manifests
   source:
-    repoURL: https://github.com/timothy-spencer/idp-dev.git
+    repoURL: https://github.com/18F/identity-eks.git
     targetRevision: HEAD
-    path: .
+    path: cluster/environments/tspencer-env
 
     # kustomize specific config
     kustomize:
