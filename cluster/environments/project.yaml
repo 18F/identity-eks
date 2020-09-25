@@ -30,6 +30,7 @@ spec:
 
   # Deny all namespaced-scoped resources from being created, except for Deployment and StatefulSet
   namespaceResourceWhitelist:
+  - group: 'batch'
     kind: Job
 
   # Enables namespace orphaned resource monitoring.
