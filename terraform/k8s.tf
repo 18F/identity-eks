@@ -113,39 +113,39 @@ resource "kubernetes_ingress" "idp-ingress" {
   }
 }
 
-resource "kubernetes_manifest" "idp_gateway" {
-  provider = kubernetes-alpha
+# resource "kubernetes_manifest" "idp_gateway" {
+#   provider = kubernetes-alpha
 
-  manifest = {
-    apiVersion = "networking.istio.io/v1alpha3"
-    kind = "Gateway"
-    "metadata" = {
-      "name" = "idp-gateway"
-      "namespace" = "idp"
-    }
-    "spec" = {
-      "selector" = {
-        "app" = "idp"
-      }
-      "servers" = [
-        {
-          "port" = {
-            "number" = 443
-            "name" = "https"
-            "protocol" = "HTTPS"
-          }
-          # XXX why doesn't this work?
-          # "hosts" = [var.idp_hostname]
-          "hosts" = ["*"]
-          "tls" = {
-            # enables HTTPS on this port with self signed certs, I hope
-            "mode" = "ISTIO_MUTUAL"
-          }
-        }
-      ]
-    }
-  }
-}
+#   manifest = {
+#     apiVersion = "networking.istio.io/v1alpha3"
+#     kind = "Gateway"
+#     "metadata" = {
+#       "name" = "idp-gateway"
+#       "namespace" = "idp"
+#     }
+#     "spec" = {
+#       "selector" = {
+#         "app" = "idp"
+#       }
+#       "servers" = [
+#         {
+#           "port" = {
+#             "number" = 443
+#             "name" = "https"
+#             "protocol" = "HTTPS"
+#           }
+#           # XXX why doesn't this work?
+#           # "hosts" = [var.idp_hostname]
+#           "hosts" = ["*"]
+#           "tls" = {
+#             # enables HTTPS on this port with self signed certs, I hope
+#             "mode" = "ISTIO_MUTUAL"
+#           }
+#         }
+#       ]
+#     }
+#   }
+# }
 
 resource "helm_release" "eksclusterautoscaler" {
   name       = "eksclusterautoscaler"
