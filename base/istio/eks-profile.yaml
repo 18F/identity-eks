@@ -3,8 +3,6 @@ kind: IstioOperator
 metadata:
   namespace: istio-system
   name: eks
-  labels:
-    app.kubernetes.io/instance: istio
 spec:
   profile: default
   components:
@@ -18,8 +16,6 @@ spec:
   addonComponents:
     kiali:
       enabled: true
-      spec:
-        createDemoSecret: true
     prometheus:
       enabled: true
     grafana:
@@ -30,3 +26,7 @@ spec:
   meshconfig:
     accessLogFile: /dev/stdout
     accessLogFormat: JSON
+
+  values:
+    kiali:
+      createDemoSecret: true
