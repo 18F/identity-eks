@@ -4,7 +4,7 @@ metadata:
   namespace: istio-system
   name: eks
 spec:
-  profile: default
+  # profile: default
   components:
     telemetry:
       enabled: false
