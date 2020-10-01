@@ -14,30 +14,31 @@ resource "kubernetes_namespace" "elk" {
   }
 }
 
-resource "kubernetes_config_map" "aws_auth" {
-  metadata {
-    name = "aws-auth"
-    namespace = "kube-system"
-  }
+# # XXX if we are FullAdministrator, I think we don't actually need this?
+# resource "kubernetes_config_map" "aws_auth" {
+#   metadata {
+#     name = "aws-auth"
+#     namespace = "kube-system"
+#   }
 
-  data = {
-    mapRoles = <<EOF
-- rolearn: ${aws_iam_role.eks-node.arn}
-  username: system:node:{{EC2PrivateDNSName}}
-  groups:
-    - system:bootstrappers
-    - system:nodes
-- rolearn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/FullAdministrator
-  username: admin
-  groups:
-    - system:masters
-- rolearn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/SOCAdministrator
-  username: soc
-  groups:
-    - view
-EOF
-  }
-}
+#   data = {
+#     mapRoles = <<EOF
+# - rolearn: ${aws_iam_role.eks-node.arn}
+#   username: system:node:{{EC2PrivateDNSName}}
+#   groups:
+#     - system:bootstrappers
+#     - system:nodes
+# - rolearn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/FullAdministrator
+#   username: admin
+#   groups:
+#     - system:masters
+# - rolearn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/SOCAdministrator
+#   username: soc
+#   groups:
+#     - view
+# EOF
+#   }
+# }
 
 resource "kubernetes_config_map" "idp-config" {
   metadata {
@@ -113,6 +114,7 @@ resource "kubernetes_ingress" "idp-ingress" {
   }
 }
 
+# # XXX this is not going to work because istio isn't going yet.  :-(
 # resource "kubernetes_manifest" "idp_gateway" {
 #   provider = kubernetes-alpha
 

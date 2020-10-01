@@ -38,6 +38,7 @@ REQUIREDBINARIES="
      jq
      step
      kustomize
+     istioctl
 "
 for i in ${REQUIREDBINARIES} ; do
      checkbinary "$i"
@@ -79,6 +80,12 @@ terraform apply
 aws eks update-kubeconfig --name "$TF_VAR_cluster_name"
 popd
 
+# Seems like you need to turn on istio operator with istioctl to start it out?
+if [ "$(kubectl -n istio-operator get deployment.apps/istio-operator -o json | jq .status.readyReplicas)" != "1" ] ; then
+	echo "doing istioctl init to bootstrap istio"
+	istioctl operator init
+fi
+
 # This turns on the EBS persistent volume stuff and make it the default.
 if kubectl describe sc ebs >/dev/null ; then
 	echo ebs persistant storage already set up
@@ -93,7 +100,6 @@ fi
 
 # bootstrap argocd
 kustomize build "$RUN_BASE/base/argocd" | kubectl apply -f -
-kubectl create namespace idp
 
 # apply k8s config for this cluster by telling argo what to run.
 if [ -z "$2" ] ; then
