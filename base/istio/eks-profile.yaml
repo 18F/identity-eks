@@ -4,29 +4,29 @@ metadata:
   namespace: istio-system
   name: eks
 spec:
-  profile: eks
-  components:
-    telemetry:
-      enabled: false
-    egressGateways:
-      enabled: true
-    ingressGateways:
-      enabled: true
+  # profile: eks
+  # components:
+  #   telemetry:
+  #     enabled: false
+  #   egressGateways:
+  #     enabled: true
+  #   ingressGateways:
+  #     enabled: true
 
-  addonComponents:
-    kiali:
-      enabled: true
-    prometheus:
-      enabled: true
-    grafana:
-      enabled: true
-    tracing:
-      enabled: true
+  # addonComponents:
+  #   kiali:
+  #     enabled: true
+  #   prometheus:
+  #     enabled: true
+  #   grafana:
+  #     enabled: true
+  #   tracing:
+  #     enabled: true
 
   # meshconfig:
   #   accessLogFile: /dev/stdout
   #   accessLogFormat: JSON
 
-  values:
-    kiali:
-      createDemoSecret: true
+  # values:
+  #   kiali:
+  #     createDemoSecret: true
