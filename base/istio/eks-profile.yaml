@@ -2,18 +2,17 @@ apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
 metadata:
   namespace: istio-system
-  name: eks
+  name: eks-controlplane
 spec:
-
-  # addonComponents:
-  #   kiali:
-  #     enabled: true
-  #   prometheus:
-  #     enabled: true
-  #   grafana:
-  #     enabled: true
-  #   tracing:
-  #     enabled: true
+  addonComponents:
+    kiali:
+      enabled: true
+    prometheus:
+      enabled: true
+    grafana:
+      enabled: true
+    tracing:
+      enabled: true
 
   # meshconfig:
   #   accessLogFile: /dev/stdout
