@@ -14,10 +14,10 @@ spec:
     tracing:
       enabled: true
 
-  # meshconfig:
-  #   accessLogFile: /dev/stdout
-  #   accessLogFormat: JSON
+  meshconfig:
+    accessLogFile: /dev/stdout
+    accessLogFormat: JSON
 
-  # values:
-  #   kiali:
-  #     createDemoSecret: true
+  values:
+    kiali:
+      createDemoSecret: true
