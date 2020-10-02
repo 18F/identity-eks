@@ -3,16 +3,16 @@ kind: IstioOperator
 metadata:
   namespace: istio-system
   name: eks-controlplane
-# spec:
-#   addonComponents:
-#     kiali:
-#       enabled: true
-#     prometheus:
-#       enabled: true
-#     grafana:
-#       enabled: true
-#     tracing:
-#       enabled: true
+spec:
+  addonComponents:
+    kiali:
+      enabled: true
+    prometheus:
+      enabled: true
+    grafana:
+      enabled: true
+    tracing:
+      enabled: true
 
   # meshconfig:
   #   accessLogFile: /dev/stdout
