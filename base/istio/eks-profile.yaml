@@ -14,7 +14,7 @@ spec:
     tracing:
       enabled: true
 
-  meshconfig:
+  meshConfig:
     accessLogFile: /dev/stdout
     accessLogFormat: JSON
 
