@@ -2,16 +2,14 @@ apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
 metadata:
   namespace: istio-system
-  name: eks
+  name: eks-istiocontrolplane
 spec:
-  # profile: eks
-  # components:
-  #   telemetry:
-  #     enabled: false
-  #   egressGateways:
-  #     enabled: true
-  #   ingressGateways:
-  #     enabled: true
+  # profile: default
+  components:
+    egressGateways:
+      enabled: true
+    ingressGateways:
+      enabled: true
 
   # addonComponents:
   #   kiali:
