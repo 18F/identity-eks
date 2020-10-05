@@ -1,7 +1,7 @@
 resources:
   - ./system/
+  - ./environments/
   # - ./idp/
-   - ./environments/
 
 # This is an example of how you can make a cluster's applications all point at
 # a particular branch instead of HEAD
