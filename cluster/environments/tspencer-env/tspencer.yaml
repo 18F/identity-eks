@@ -8,7 +8,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: terraform
-        image: gsatspencer/identity-terraform:1.0.8
+        image: gsatspencer/identity-terraform:1.0.9
         resources:
           requests:
             memory: "1024Mi"
