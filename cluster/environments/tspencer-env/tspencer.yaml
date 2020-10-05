@@ -8,7 +8,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: terraform
-        image: gsatspencer/identity-terraform:1.0.1
+        image: gsatspencer/identity-terraform:1.0.2
         resources:
           requests:
             memory: "1024Mi"
@@ -22,7 +22,7 @@ spec:
         - name: TF_DIR
           value: "app"
         - name: TF_IDPHOSTNAME
-          value: "secure.tspencer.identitysandbox.gov"
+          value: "idp.tspencer.identitysandbox.gov"
         - name: BRANCH
           value: "stages/tspencer"
         volumeMounts:
