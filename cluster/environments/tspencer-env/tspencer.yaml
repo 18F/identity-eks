@@ -27,7 +27,7 @@ spec:
           value: "stages/tspencer"
         volumeMounts:
         - name: deploy-key
-          mountPath: "/.ssh"
+          mountPath: "/root/.ssh"
           readOnly: true
       volumes:
       - name: deploy-key
