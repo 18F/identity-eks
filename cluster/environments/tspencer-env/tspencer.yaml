@@ -33,4 +33,5 @@ spec:
       - name: deploy-key
         secret:
           secretName: deploy-key
+          defaultMode: 0400
 
