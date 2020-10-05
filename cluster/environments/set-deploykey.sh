@@ -16,6 +16,8 @@ mkdir -p "$CONFIGDIR"
 
 cp "$1" "$CONFIGDIR"/id_rsa
 cp "$2" "$CONFIGDIR"/id_rsa.pub
+ssh-keyscan github.com > "$CONFIGDIR"/known_hosts
+
 
 kubectl create secret generic deploy-key --from-file="$CONFIGDIR" -n terraform --dry-run=client -o yaml | kubectl apply -f -
 
