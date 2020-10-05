@@ -15,7 +15,7 @@ spec:
             cpu: ".1"
           limits:
             memory: "2048Mi"
-            cpu: "2"
+            cpu: "1"
         env:
         - name: TF_ENVIRONMENT
           value: "tspencer"
