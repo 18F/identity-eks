@@ -1,14 +1,20 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: tspencer-env
 spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tspencer-env
   template:
+    metadata:
+      labels:
+        app: tspencer-env
     spec:
-      restartPolicy: Never
       containers:
       - name: terraform
-        image: gsatspencer/identity-terraform:1.0.26
+        image: gsatspencer/identity-terraform:1.0.28
         resources:
           requests:
             memory: "1024Mi"
