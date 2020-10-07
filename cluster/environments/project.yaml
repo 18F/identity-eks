@@ -32,6 +32,8 @@ spec:
   namespaceResourceWhitelist:
   - group: 'batch'
     kind: Job
+  - group: 'apps'
+    kind: Deployment
 
   # Enables namespace orphaned resource monitoring.
   orphanedResources:
