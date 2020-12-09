@@ -1,0 +1,9 @@
+resources:
+  - argocd.yaml
+  - falco.yaml
+  - clamav.yaml
+  - elk.yaml
+  - dashboard.yaml
+  - spot-termination.yaml
+  - argoevents.yaml
+

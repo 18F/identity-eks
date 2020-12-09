@@ -1,0 +1,6 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+spec:
+  source:
+    targetRevision: tspencer/tf
+

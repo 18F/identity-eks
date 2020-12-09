@@ -23,7 +23,7 @@ resource "aws_db_instance" "idp" {
   allow_major_version_upgrade = true
 
   tags = {
-    Name = "${var.cluster_name}"
+    Name = var.cluster_name
   }
 
   vpc_security_group_ids = [aws_security_group.db.id]

@@ -1,0 +1,4 @@
+namespace: argo-events
+resources:
+- eventbus.yaml
+

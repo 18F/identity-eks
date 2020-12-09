@@ -106,6 +106,6 @@ if [ -z "$2" ] ; then
   kubectl apply -f "$RUN_BASE/cluster/cluster.yaml"
   #kustomize build "$RUN_BASE/cluster" | kubectl apply -f -
 else
-  kubectl apply -f "$RUN_BASE/cluster-$2/cluster.yaml"
+  kubectl apply -f "$RUN_BASE/$2/cluster.yaml"
   #kustomize build "$RUN_BASE/cluster-$2" | kubectl apply -f -
 fi

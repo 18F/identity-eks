@@ -1,0 +1,14 @@
+resources:
+  - ./system/
+  - ./tf/
+
+# This is an example of how you can make a cluster's applications all point at
+# a particular branch instead of HEAD
+patches:
+- target:
+    kind: Application
+    namespace: argocd
+  patch: |-
+    - op: replace
+      path: /spec/source/targetRevision
+      value: tspencer/tf
