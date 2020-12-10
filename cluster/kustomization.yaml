@@ -1,6 +1,5 @@
 resources:
   - ./system/
-  - ./environments/
   # - ./idp/
 
 # This is an example of how you can make a cluster's applications all point at
