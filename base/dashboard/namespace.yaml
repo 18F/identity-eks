@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: kubernetes-dashboard
-  labels:
-    istio-injection: enabled
+#  labels:
+#    istio-injection: enabled
 
 
