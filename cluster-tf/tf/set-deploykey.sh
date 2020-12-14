@@ -5,7 +5,7 @@
 # code from our private repos.
 #
 
-if [ ! -f "$1" ] && [ ! -f "$2" ]  ; then
+if [ ! -f "$1" ] || [ ! -f "$2" ]  ; then
   echo "usage:    $0 <id_rsa> <id_rsa_private>"
   echo "example:  $0 ~/.ssh/id_rsa ~/.ssh/id_rsa_private"
   echo "          where id_rsa and id_rsa.pub are the private/pub keys for the identity-devops repo"

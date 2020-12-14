@@ -5,5 +5,4 @@ resources:
   - elk.yaml
   - dashboard.yaml
   - spot-termination.yaml
-  - argoevents.yaml
 
