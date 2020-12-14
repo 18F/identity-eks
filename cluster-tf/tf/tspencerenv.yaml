@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: https://github.com/18F/identity-eks.git
     targetRevision: HEAD
-    path: cluster/environments/tspencerenv
+    path: cluster-tf/tf/tspencerenv
 
     # kustomize specific config
     kustomize:
