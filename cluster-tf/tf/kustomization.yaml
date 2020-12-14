@@ -1,4 +1,4 @@
 resources:
   - project.yaml
-  - tspencer-env.yaml
+  - tspencer_env.yaml
 

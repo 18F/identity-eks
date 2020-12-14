@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tspencer-env
+  name: tspencer_env
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tspencer-env
+      app: tspencer_env
   template:
     metadata:
       labels:
-        app: tspencer-env
+        app: tspencer_env
     spec:
       containers:
       - name: terraform
