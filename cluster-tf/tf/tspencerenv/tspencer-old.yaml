@@ -1,0 +1,100 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow                  # new type of k8s spec
+metadata:
+  generateName: tspencer-env-    # name of the workflow spec
+spec:
+  entrypoint: pipeline          # invoke the pipeline template
+  volumes:
+  - name: deploy-key
+    secret:
+      secretName: deploy-key
+      defaultMode: 0400
+  templates:
+  - name: pipeline              # name of the template
+    steps:
+    - - name: checkout-tf
+        template: checkout-tf
+    - - name: build-tf
+        template: build-tf
+        arguments:
+          parameters:
+            - name: TF_ENVIRONMENT
+              value: "tspencer"
+            - name: TF_DIR
+              value: "app"
+            - name: TF_IDPHOSTNAME
+              value: "idp.tspencer.identitysandbox.gov"
+            - name: BRANCH
+              value: "stages/tspencer"
+    - - name: tf-env
+        template: tf-env
+    - - name: test-env
+        template: test-env
+
+  - name: checkout-tf           # Check out the tfcontainer and store it as an artifact
+    container:
+      image: alpine/git
+      command: [git, clone, --depth=1, https://github.com/18F/identity-tfcontainer.git, /tmp/identity-tfcontainer]
+    volumes:
+    outputs:
+      artifacts:
+      - name: identity-tfcontainer
+        path: /tmp/identity-tfcontainer
+
+  - name: build-tf              # build the tfcontainer from the checked out artifact
+    inputs:
+      artifacts:
+      - name: identity-tfcontainer
+        path: /tmp/identity-tfcontainer
+    container:
+      image: docker:20
+      command: [sh, -c]
+      args: ["until docker ps; do sleep 3 ; done ; cd /tmp/identity-tfcontainer ; DOCKER_BUILDKIT=1 docker build --add-host github.com:`dig +short github.com` --ssh default ."]
+      env:
+      - name: DOCKER_HOST               # the docker daemon can be access on the standard port on localhost
+        value: 127.0.0.1
+    sidecars:
+    - name: dind
+      image: docker:20-dind          # Docker already provides an image for running a Docker daemon
+      env:
+        - name: DOCKER_TLS_CERTDIR         # Docker TLS env config
+          value: ""
+      securityContext:
+        privileged: true                # the Docker daemon can only run in a privileged container
+      # mirrorVolumeMounts will mount the same volumes specified in the main container
+      # to the sidecar (including artifacts), at the same mountPaths. This enables
+      # dind daemon to (partially) see the same filesystem as the main container in
+      # order to use features such as docker volume binding.
+      mirrorVolumeMounts: true
+
+  - name: tf-env                # name of the template
+    container:
+      image: {{XXXparameters}}
+
+  - name: test-env              # name of the template
+
+
+    container:
+      image: gsatspencer/identity-terraform:1.0.30
+      resources:
+        requests:
+          memory: "1024Mi"
+          cpu: ".1"
+        limits:
+          memory: "2048Mi"
+          cpu: "1"
+      env:
+      - name: TF_ENVIRONMENT
+        value: "tspencer"
+      - name: TF_DIR
+        value: "app"
+      - name: TF_IDPHOSTNAME
+        value: "idp.tspencer.identitysandbox.gov"
+      - name: BRANCH
+        value: "stages/tspencer"
+      volumeMounts:
+      - name: deploy-key
+        mountPath: "/root/.ssh"
+        readOnly: true
+    volumes:

@@ -1,42 +1,104 @@
-apiVersion: apps/v1
-kind: Deployment
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
 metadata:
-  name: tspencerenv
+  generateName: tspencer-env-    # name of the workflow spec
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: tspencerenv
-  template:
-    metadata:
-      labels:
-        app: tspencerenv
-    spec:
-      containers:
-      - name: terraform
-        image: gsatspencer/identity-terraform:1.0.30
-        resources:
-          requests:
-            memory: "1024Mi"
-            cpu: ".1"
-          limits:
-            memory: "2048Mi"
-            cpu: "1"
-        env:
-        - name: TF_ENVIRONMENT
-          value: "tspencer"
-        - name: TF_DIR
-          value: "app"
-        - name: TF_IDPHOSTNAME
-          value: "idp.tspencer.identitysandbox.gov"
-        - name: BRANCH
-          value: "stages/tspencer"
-        volumeMounts:
-        - name: deploy-key
-          mountPath: "/root/.ssh"
-          readOnly: true
-      volumes:
+  entrypoint: pipeline          # invoke the pipeline template
+  volumes:
+  - name: deploy-key            # secret with deploy keys that allow us to readonly-pull our repos
+    secret:
+      secretName: deploy-key
+      defaultMode: 0400
+  templates:
+  - name: pipeline              # name of the template
+    steps:
+    - - name: checkout-identity-devops
+        template: checkout-code
+        arguments:
+          parameters:
+            - name: repo
+              value: git@github.com:18F/identity-devops.git
+            - name: branch
+              value: stages/tspencer
+            - name: key
+              value: id_rsa
+            - name: repodir
+              value: identity-devops
+    - - name: checkout-identity-devops-private
+        template: checkout-code
+        arguments:
+          parameters:
+            - name: repo
+              value: git@github.com:18F/identity-devops-private.git
+            - name: branch
+              value: master
+            - name: key
+              value: id_rsa_private
+            - name: repodir
+              value: identity-devops-private
+    - - name: tf-env
+        template: tf-env
+        arguments:
+          parameters:
+            - name: TF_ENVIRONMENT
+              value: "tspencer"
+            - name: TF_DIR
+              value: "app"
+            - name: TF_IDPHOSTNAME
+              value: "idp.tspencer.identitysandbox.gov"
+            - name: BRANCH
+              value: "stages/tspencer"
+    - - name: test-env
+        template: test-env
+        arguments:
+          parameters:
+            - name: TF_ENVIRONMENT
+              value: "tspencer"
+            - name: TF_IDPHOSTNAME
+              value: "idp.tspencer.identitysandbox.gov"
+
+  - name: checkout-code           # Check out code and store it as an artifact
+    inputs:
+      parameters:
+      - name: repo
+      - name: branch
+      - name: key
+      - name: repodir
+    container:
+      image: alpine/git
+      command: [sh, -c]
+      args: ["GIT_SSH_COMMAND='ssh -i /root/.ssh/{{inputs.parameters.key}} -o IdentitiesOnly=yes' git clone --branch {{inputs.parameters.branch}} --depth=1 {{inputs.parameters.repo}} /tmp/code ; git rev-parse HEAD --prefix /tmp/code > /tmp/codegithash.txt"]
+      volumeMounts:
       - name: deploy-key
-        secret:
-          secretName: deploy-key
-          defaultMode: 0400
+        mountPath: "/root/.ssh"
+        readOnly: true
+    outputs:
+      artifacts:
+      - name: "{{inputs.parameters.repodir}}"
+        path: /tmp/code
+      artifacts:
+      - name: "{{inputs.parameters.repodir}}-githash"
+        path: /tmp/codegithash
+
+  - name: tf-env                # run tf on the env
+    inputs:
+      parameters:
+      - name: TF_ENVIRONMENT
+      - name: TF_DIR
+      - name: TF_IDPHOSTNAME
+      - name: BRANCH
+      artifacts:
+      - name: identity-devops
+        path: /tmp/identity-devops
+      - name: identity-devops-githash
+        path: /tmp/identity-devops-githash
+      - name: identity-devops-private
+        path: /tmp/identity-devops-private
+    container:
+      image: XXX
+      command: [sh, -c]
+      args: ["
+      "]
+
+  - name: test-env              # test the env
