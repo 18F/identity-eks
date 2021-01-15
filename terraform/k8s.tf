@@ -68,25 +68,25 @@
 #   }
 # }
 
-# resource "helm_release" "eksclusterautoscaler" {
-#   name       = "eksclusterautoscaler"
-#   repository = "https://kubernetes.github.io/autoscaler" 
-#   chart      = "cluster-autoscaler-chart"
-#   version    = "1.0.3"
-#   namespace  = "kube-system"
+resource "helm_release" "eksclusterautoscaler" {
+  name       = "eksclusterautoscaler"
+  repository = "https://kubernetes.github.io/autoscaler" 
+  chart      = "cluster-autoscaler-chart"
+  version    = "1.0.3"
+  namespace  = "kube-system"
 
-#   set {
-#     name  = "awsRegion"
-#     value = var.region
-#   }
+  set {
+    name  = "awsRegion"
+    value = var.region
+  }
 
-#   set {
-#     name  = "extraArgs.skip-nodes-with-system-pods"
-#     value = "true"
-#   }
+  set {
+    name  = "extraArgs.skip-nodes-with-system-pods"
+    value = "true"
+  }
 
-#   set {
-#     name  = "autoDiscovery.clusterName"
-#     value = var.cluster_name
-#   }
-# }
+  set {
+    name  = "autoDiscovery.clusterName"
+    value = var.cluster_name
+  }
+}
