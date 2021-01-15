@@ -7,10 +7,10 @@ resource "aws_iam_role_policy" "alb_ingress_controller" {
 }
 
 resource "helm_release" "alb-ingress-controller" {
-  name       = "alb-ingress-controller"
-  repository = "http://storage.googleapis.com/kubernetes-charts-incubator" 
-  chart      = "aws-alb-ingress-controller"
-  version    = "0.1.14"
+  name       = "aws-load-balancer-controller"
+  repository = "https://aws.github.io/eks-charts" 
+  chart      = "aws-load-balancer-controller"
+  version    = "1.1.2"
   namespace  = "kube-system"
 
   set {

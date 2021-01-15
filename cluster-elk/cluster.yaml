@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cluster-elk
+  name: cluster
   # You'll usually want to add your resources to the argocd namespace.
   namespace: argocd
   # Add a this finalizer ONLY if you want these to cascade delete.
@@ -16,8 +16,8 @@ spec:
   # Source of the application manifests
   source:
     repoURL: https://github.com/18F/identity-eks.git
-    targetRevision: HEAD
-    path: cluster-elk
+    targetRevision: tspencer/elkhackathon
+    path: cluster
 
     # kustomize specific config
     kustomize:
