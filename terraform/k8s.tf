@@ -1,9 +1,9 @@
 
-resource "kubernetes_namespace" "elk" {
-  metadata {
-    name = "elk"
-  }
-}
+# resource "kubernetes_namespace" "elk" {
+#   metadata {
+#     name = "elk"
+#   }
+# }
 
 # # XXX if we are FullAdministrator, I think we don't actually need this?
 # resource "kubernetes_config_map" "aws_auth" {
@@ -68,25 +68,25 @@ resource "kubernetes_namespace" "elk" {
 #   }
 # }
 
-resource "helm_release" "eksclusterautoscaler" {
-  name       = "eksclusterautoscaler"
-  repository = "https://kubernetes.github.io/autoscaler" 
-  chart      = "cluster-autoscaler-chart"
-  version    = "1.0.3"
-  namespace  = "kube-system"
+# resource "helm_release" "eksclusterautoscaler" {
+#   name       = "eksclusterautoscaler"
+#   repository = "https://kubernetes.github.io/autoscaler" 
+#   chart      = "cluster-autoscaler-chart"
+#   version    = "1.0.3"
+#   namespace  = "kube-system"
 
-  set {
-    name  = "awsRegion"
-    value = var.region
-  }
+#   set {
+#     name  = "awsRegion"
+#     value = var.region
+#   }
 
-  set {
-    name  = "extraArgs.skip-nodes-with-system-pods"
-    value = "true"
-  }
+#   set {
+#     name  = "extraArgs.skip-nodes-with-system-pods"
+#     value = "true"
+#   }
 
-  set {
-    name  = "autoDiscovery.clusterName"
-    value = var.cluster_name
-  }
-}
+#   set {
+#     name  = "autoDiscovery.clusterName"
+#     value = var.cluster_name
+#   }
+# }
