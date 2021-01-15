@@ -1,5 +1,4 @@
 resources:
-  - cert-manager.yaml
   - falco.yaml
   - clamav.yaml
   - elk.yaml
